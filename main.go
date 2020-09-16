@@ -72,15 +72,5 @@ func newValidationErrorRecursiveTypeUsage(keysResultingInRecursiveness []string)
 	)
 }
 
-// func newValidationErrorReservedKeyword(reservedKeywordLiteral, parentItemName string) error {
-// 	return errors.New(
-// 		fmt.Sprintf(
-// 			"ErrReservedKeyword: reserved keyword used \"%s\" in \"%s\"",
-// 			reservedKeywordLiteral,
-// 			parentItemName,
-// 		),
-// 	)
-// }
-
 func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) { return }
 func convertToAST(yamlData map[interface{}]interface{}) *ast.File          { return &ast.File{} }
