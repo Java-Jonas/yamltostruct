@@ -1,0 +1,86 @@
+package yamltostruct
+
+import (
+	"errors"
+	"fmt"
+	"go/ast"
+	"io/ioutil"
+	"strings"
+
+	"gopkg.in/yaml.v2"
+)
+
+func readYamlFile(filePath string) ([]byte, error) {
+	yamlDataBytes, err := ioutil.ReadFile(filePath)
+
+	if err != nil {
+		return yamlDataBytes, err
+	}
+
+	return yamlDataBytes, err
+}
+
+func ConvertToDataMap(yamlDataBytes []byte) (map[interface{}]interface{}, error) {
+	yamlData := make(map[interface{}]interface{})
+	err := yaml.Unmarshal(yamlDataBytes, &yamlData)
+
+	if err != nil {
+		return yamlData, err
+	}
+
+	return yamlData, err
+}
+
+func Unmarshal(yamlDataBytes []byte) ([]byte, error) {
+	return []byte("test"), nil
+}
+
+func newValidationErrorTypeNotFound(missingTypeLiteral, parentItemName string) error {
+	return errors.New(
+		fmt.Sprintf(
+			"ErrTypeNotFound: type with name \"%s\" in \"%s\" was not found",
+			missingTypeLiteral,
+			parentItemName,
+		),
+	)
+}
+func newValidationErrorInvalidValue(keyName, parentItemName string) error {
+	return errors.New(
+		fmt.Sprintf(
+			"ErrInvalidType: value assigned to key \"%s\" in \"%s\" is invalid",
+			keyName,
+			parentItemName,
+		),
+	)
+}
+func newValidationErrorIllegalTypeName(keyName, parentItemName string) error {
+	return errors.New(
+		fmt.Sprintf(
+			"ErrIllegalTypeName: illegal type name \"%s\" in \"%s\"",
+			keyName,
+			parentItemName,
+		),
+	)
+}
+func newValidationErrorRecursiveTypeUsage(keysResultingInRecursiveness []string) error {
+	keys := strings.Join(keysResultingInRecursiveness, "->")
+	return errors.New(
+		fmt.Sprintf(
+			"ErrRecursiveTypeUsage: illegal recursive type detected for \"%s\"",
+			keys,
+		),
+	)
+}
+
+// func newValidationErrorReservedKeyword(reservedKeywordLiteral, parentItemName string) error {
+// 	return errors.New(
+// 		fmt.Sprintf(
+// 			"ErrReservedKeyword: reserved keyword used \"%s\" in \"%s\"",
+// 			reservedKeywordLiteral,
+// 			parentItemName,
+// 		),
+// 	)
+// }
+
+func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) { return }
+func convertToAST(yamlData map[interface{}]interface{}) *ast.File          { return &ast.File{} }
