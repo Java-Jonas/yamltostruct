@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"go/ast"
+	"go/parser"
+	"go/token"
 	"io/ioutil"
 	"strings"
 
@@ -76,4 +78,17 @@ func newValidationErrorRecursiveTypeUsage(keysResultingInRecursiveness []string)
 }
 
 func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) { return }
-func convertToAST(yamlData map[interface{}]interface{}) *ast.File          { return &ast.File{} }
+
+type ASTBuilder struct{}
+
+func NewASTBuilder() *ASTBuilder {
+	return &ASTBuilder{}
+}
+
+func (a *ASTBuilder) build(yamlData map[interface{}]interface{}) *ast.File {
+	src := `
+	package main
+	`
+	f, _ := parser.ParseFile(token.NewFileSet(), "", src, 0)
+	return f
+}
