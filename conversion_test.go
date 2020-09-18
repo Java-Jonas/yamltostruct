@@ -66,8 +66,40 @@ func TestConvertToASTBasicCases(t *testing.T) {
 		expectedOutput := `
 		package foobar
 		`
-		normalizedInput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
+		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
 
-		assert.Equal(t, normalizedInput, normalizedExpectedOutput)
+		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
+	})
+	t.Run("should convert named types", func(t *testing.T) {
+		input := map[interface{}]interface{}{
+			"_package": "foobar",
+			"foo":      "string",
+			"bar":      "int",
+		}
+		expectedOutput := `
+		package foobar
+		type foo string
+		type bar int
+		`
+		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
+
+		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
+	})
+	t.Run("should convert struct types", func(t *testing.T) {
+		input := map[interface{}]interface{}{
+			"_package": "foobar",
+			"foo": map[interface{}]interface{}{
+				"bar": "int",
+			},
+		}
+		expectedOutput := `
+		package foobar
+		type foo struct {
+			bar int
+		}
+		`
+		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
+
+		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
 	})
 }
