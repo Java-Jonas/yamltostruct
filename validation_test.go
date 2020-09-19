@@ -309,8 +309,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		actualErrors := validateYamlData(data)
 		expectedErrors := []error{
-			newValidationErrorTypeNotFound("[]schtring", "root"),
-			newValidationErrorTypeNotFound("[]bar", "baz"),
+			newValidationErrorTypeNotFound("schtring", "root"),
+			newValidationErrorTypeNotFound("bar", "baz"),
 		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -334,10 +334,29 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		actualErrors := validateYamlData(data)
 		expectedErrors := []error{
-			newValidationErrorTypeNotFound("[int]schtring", "root"),
-			newValidationErrorTypeNotFound("[schtring]int", "root"),
-			newValidationErrorTypeNotFound("[int]bar", "baz"),
-			newValidationErrorTypeNotFound("[bar]int", "baz"),
+			newValidationErrorTypeNotFound("schtring", "root"),
+			newValidationErrorTypeNotFound("schtring", "root"),
+			newValidationErrorTypeNotFound("bar", "baz"),
+			newValidationErrorTypeNotFound("bar", "baz"),
+		}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
+
+	t.Run("should fail with multiple errors of multiple undefined types are used in declaration", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "map[bar]map[ban]baz",
+		}
+
+		actualErrors := validateYamlData(data)
+		expectedErrors := []error{
+			newValidationErrorTypeNotFound("bar", "root"),
+			newValidationErrorTypeNotFound("ban", "root"),
+			newValidationErrorTypeNotFound("baz", "root"),
 		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -367,26 +386,6 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 		assert.Equal(t, []error{}, redundantErrors)
 	})
 
-	t.Run("should fail when type is used in own declaration", func(t *testing.T) {
-		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "bar",
-			"baz": map[interface{}]interface{}{
-				"ban": "baz",
-			},
-		}
-
-		actualErrors := validateYamlData(data)
-		expectedErrors := []error{
-			newValidationErrorTypeNotFound("bar", "root"),
-			newValidationErrorTypeNotFound("baz", "ban"),
-		}
-
-		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
-
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
-	})
 }
 
 func TestValidateYamlInvalidValue(t *testing.T) {
@@ -475,6 +474,26 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		actualErrors := validateYamlData(data)
 		expectedErrors := []error{}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
+
+	t.Run("should fail when type is used in own declaration", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "bar",
+			"baz": map[interface{}]interface{}{
+				"ban": "baz",
+			},
+		}
+
+		actualErrors := validateYamlData(data)
+		expectedErrors := []error{
+			newValidationErrorRecursiveTypeUsage([]string{"ban"}),
+		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
@@ -597,6 +616,18 @@ func TestExtractTypes(t *testing.T) {
 
 		actualOutput := extractTypes(input)
 		expectedOutput := []string{"string", "uint", "bool"}
+
+		assert.Equal(t, expectedOutput, actualOutput)
+	})
+}
+
+func TestFindUndefinedTypesIn(t *testing.T) {
+	t.Run("should find all undefined types", func(t *testing.T) {
+		definedTypesInput := []string{"foo", "bar"}
+		usedTypesInput := []string{"foo", "bar", "baz", "string", "uint16", "bool", "bam"}
+
+		actualOutput := findUndefinedTypesIn(usedTypesInput, definedTypesInput)
+		expectedOutput := []string{"baz", "bam"}
 
 		assert.Equal(t, expectedOutput, actualOutput)
 	})

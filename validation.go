@@ -86,13 +86,31 @@ func validateObjectValues(yamlObjectData map[interface{}]interface{}, parentObje
 // map[string]int => []string{"string", "int"}
 // (?!map\b)\b\w+/g
 func extractTypes(typeDefinitionString string) (extractedTypes []string) {
-	re := regexp.MustCompile(`(?!map\b)\b\w+/g`)
-	// TODO
-	re.FindString(typeDefinitionString)
+	re := regexp.MustCompile(`[A-Za-z0-9_]*`)
+	matches := re.FindAllString(typeDefinitionString, -1)
+	for _, match := range matches {
+		if match == "map" || match == "" {
+			continue
+		}
+		extractedTypes = append(extractedTypes, match)
+	}
 	return
 }
 
 func findUndefinedTypesIn(usedTypes, definedTypes []string) (undefinedTypes []string) {
+	allKnownTypes := append(definedTypes, golangBasicTypes...)
+	for _, usedType := range usedTypes {
+		var isDefined bool
+		for _, knownType := range allKnownTypes {
+			if knownType == usedType {
+				isDefined = true
+				break
+			}
+		}
+		if !isDefined {
+			undefinedTypes = append(undefinedTypes, usedType)
+		}
+	}
 	return
 }
 
@@ -119,8 +137,8 @@ func validateTypeDeclarationCompleteness(yamlData map[interface{}]interface{}) (
 			valueString := fmt.Sprintf("%v", value)
 			extractedTypes := extractTypes(valueString)
 			undefinedTypes := findUndefinedTypesIn(extractedTypes, definedTypes)
-			for _, undefiundefinedType := range undefinedTypes {
-				errs = append(errs, newValidationErrorTypeNotFound(undefiundefinedType, "root"))
+			for _, undefinedType := range undefinedTypes {
+				errs = append(errs, newValidationErrorTypeNotFound(undefinedType, "root"))
 			}
 		}
 
@@ -148,8 +166,8 @@ func validateObjectTypesDeclarationCompleteness(
 		valueString := fmt.Sprintf("%v", value)
 		extractedTypes := extractTypes(valueString)
 		undefinedTypes := findUndefinedTypesIn(extractedTypes, definedTypes)
-		for _, undefiundefinedType := range undefinedTypes {
-			errs = append(errs, newValidationErrorTypeNotFound(undefiundefinedType, parentObjectName))
+		for _, undefinedType := range undefinedTypes {
+			errs = append(errs, newValidationErrorTypeNotFound(undefinedType, parentObjectName))
 		}
 	}
 
@@ -180,6 +198,9 @@ func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) {
 
 	missingPackageDeclarationErrs := validatePackageDeclarationExistence(yamlData)
 	errs = append(errs, missingPackageDeclarationErrs...)
+
+	missingTypeDeclarationErrs := validateTypeDeclarationCompleteness(yamlData)
+	errs = append(errs, missingTypeDeclarationErrs...)
 
 	return
 }
