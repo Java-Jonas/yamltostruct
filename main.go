@@ -55,7 +55,7 @@ func newUnexpectedError() error {
 func newValidationErrorInvalidValue(keyName, parentItemName string) error {
 	return errors.New(
 		fmt.Sprintf(
-			"ErrInvalidType: value assigned to key \"%s\" in \"%s\" is invalid",
+			"ErrInvalidValue: value assigned to key \"%s\" in \"%s\" is invalid",
 			keyName,
 			parentItemName,
 		),

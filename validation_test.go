@@ -416,6 +416,31 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 		assert.Equal(t, []error{}, redundantErrors)
 	})
 
+	t.Run("should fail on usage of empty and nil values", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      nil,
+			"bar":      "",
+			"baz": map[interface{}]interface{}{
+				"ban": nil,
+				"baf": "",
+			},
+		}
+
+		actualErrors := validateYamlData(data)
+		expectedErrors := []error{
+			newValidationErrorInvalidValue("foo", "root"),
+			newValidationErrorInvalidValue("bar", "root"),
+			newValidationErrorInvalidValue("ban", "baz"),
+			newValidationErrorInvalidValue("baf", "baz"),
+		}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
+
 	t.Run("should fail on usage of invalid list values", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"_package": "packageName",
@@ -423,9 +448,9 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 			"bar":      "string",
 			"baz": map[interface{}]interface{}{
 				"ban":  "int32",
-				"mant": []interface{}{"a", "b"},
+				"mant": []interface{}{},
 			},
-			"rant": []interface{}{"c", "d"},
+			"rant": []interface{}{},
 		}
 
 		actualErrors := validateYamlData(data)
@@ -446,10 +471,8 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 			"foo":      "int",
 			"bar":      "string",
 			"baz": map[interface{}]interface{}{
-				"ban": "int32",
-				"bant": map[interface{}]interface{}{
-					"fant": "string",
-				},
+				"ban":  "int32",
+				"bant": map[interface{}]interface{}{},
 			},
 		}
 
