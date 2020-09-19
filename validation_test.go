@@ -566,3 +566,38 @@ func TestValidateYamlMissingPackageName(t *testing.T) {
 		assert.Equal(t, []error{}, redundantErrors)
 	})
 }
+
+func TestExtractTypes(t *testing.T) {
+	t.Run("should extract a basic type", func(t *testing.T) {
+		input := "string"
+
+		actualOutput := extractTypes(input)
+		expectedOutput := []string{"string"}
+
+		assert.Equal(t, expectedOutput, actualOutput)
+	})
+	t.Run("should extract a slice type", func(t *testing.T) {
+		input := "[]int"
+
+		actualOutput := extractTypes(input)
+		expectedOutput := []string{"int"}
+
+		assert.Equal(t, expectedOutput, actualOutput)
+	})
+	t.Run("should extract both types form a map declaration", func(t *testing.T) {
+		input := "map[string]int16"
+
+		actualOutput := extractTypes(input)
+		expectedOutput := []string{"string", "int16"}
+
+		assert.Equal(t, expectedOutput, actualOutput)
+	})
+	t.Run("should extract all types from a complicated declaration", func(t *testing.T) {
+		input := "map[string]map[uint][][]bool"
+
+		actualOutput := extractTypes(input)
+		expectedOutput := []string{"string", "uint", "bool"}
+
+		assert.Equal(t, expectedOutput, actualOutput)
+	})
+}
