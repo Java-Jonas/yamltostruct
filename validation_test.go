@@ -2,8 +2,9 @@ package yamltostruct
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func findErrorIn(val error, slice []error) (int, bool) {
@@ -110,9 +111,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 			"_package": "packageName",
 			"fo o":     "int",
 			"baz": map[interface{}]interface{}{
-				"oof":   "int",
-				"ba n":  "int",
-				"bu nt": map[interface{}]interface{}{},
+				"oof":  "int",
+				"ba n": "int",
 			},
 		}
 
@@ -120,7 +120,6 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 		expectedErrors := []error{
 			newValidationErrorIllegalTypeName("fo o", "root"),
 			newValidationErrorIllegalTypeName("ba n", "baz"),
-			newValidationErrorIllegalTypeName("bu nt", "baz"),
 		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -195,6 +194,15 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 		assert.Equal(t, []error{}, missingErrors)
 		assert.Equal(t, []error{}, redundantErrors)
+	})
+}
+
+func TestIsIllegalTypeName(t *testing.T) {
+	t.Run("should return false if the type names are valid", func(t *testing.T) {
+		assert.Equal(t, false, isIllegalTypeName("foo_"), isIllegalTypeName("b_ar"), isIllegalTypeName("BA2Z"))
+	})
+	t.Run("should return true if the type names are illegal", func(t *testing.T) {
+		assert.Equal(t, true, isIllegalTypeName("fo o"), isIllegalTypeName("b*ar"), isIllegalTypeName("B+2Z"))
 	})
 }
 

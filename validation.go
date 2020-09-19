@@ -34,6 +34,9 @@ func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) {
 	valueErrors := validateValues(yamlData)
 	errs = append(errs, valueErrors...)
 
+	illegalTypeNameErrors := validateTypeNames(yamlData)
+	errs = append(errs, illegalTypeNameErrors...)
+
 	missingPackageDeclarationErrs := validatePackageDeclarationExistence(yamlData)
 	errs = append(errs, missingPackageDeclarationErrs...)
 

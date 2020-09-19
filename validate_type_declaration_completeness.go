@@ -7,24 +7,6 @@ import (
 
 // returns errors if types are used which are not declared in the YAML file
 // order of declaration is irrelevant
-func validateObjectTypesDeclarationCompleteness(
-	yamlObjectData map[interface{}]interface{},
-	parentObjectName string,
-	definedTypes []string,
-) (errs []error) {
-
-	for _, value := range yamlObjectData {
-		valueString := fmt.Sprintf("%v", value)
-		extractedTypes := extractTypes(valueString)
-		undefinedTypes := findUndefinedTypesIn(extractedTypes, definedTypes)
-		for _, undefinedType := range undefinedTypes {
-			errs = append(errs, newValidationErrorTypeNotFound(undefinedType, parentObjectName))
-		}
-	}
-
-	return
-}
-
 func validateTypeDeclarationCompleteness(yamlData map[interface{}]interface{}) (errs []error) {
 
 	var definedTypes []string
@@ -61,6 +43,24 @@ func validateTypeDeclarationCompleteness(yamlData map[interface{}]interface{}) (
 			}
 			objectValidationErrs := validateObjectTypesDeclarationCompleteness(mapValue, keyName, definedTypes)
 			errs = append(errs, objectValidationErrs...)
+		}
+	}
+
+	return
+}
+
+func validateObjectTypesDeclarationCompleteness(
+	yamlObjectData map[interface{}]interface{},
+	objectName string,
+	definedTypes []string,
+) (errs []error) {
+
+	for _, value := range yamlObjectData {
+		valueString := fmt.Sprintf("%v", value)
+		extractedTypes := extractTypes(valueString)
+		undefinedTypes := findUndefinedTypesIn(extractedTypes, definedTypes)
+		for _, undefinedType := range undefinedTypes {
+			errs = append(errs, newValidationErrorTypeNotFound(undefinedType, objectName))
 		}
 	}
 

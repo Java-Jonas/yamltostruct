@@ -37,7 +37,7 @@ func validateValues(yamlData map[interface{}]interface{}) (errs []error) {
 	return
 }
 
-func validateObjectValues(yamlObjectData map[interface{}]interface{}, parentObjectName string) (errs []error) {
+func validateObjectValues(yamlObjectData map[interface{}]interface{}, objectName string) (errs []error) {
 	for key, value := range yamlObjectData {
 		keyName := fmt.Sprintf("%v", key)
 
@@ -46,11 +46,11 @@ func validateObjectValues(yamlObjectData map[interface{}]interface{}, parentObje
 		}
 
 		if isSlice(value) || isMap(value) {
-			errs = append(errs, newValidationErrorInvalidValue(keyName, parentObjectName))
+			errs = append(errs, newValidationErrorInvalidValue(keyName, objectName))
 			continue
 		}
 
-		errs = append(errs, newValidationErrorInvalidValue(keyName, parentObjectName))
+		errs = append(errs, newValidationErrorInvalidValue(keyName, objectName))
 	}
 
 	return
