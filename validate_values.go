@@ -5,7 +5,7 @@ import (
 )
 
 // returns errors if invalid values are used in the YAML file
-// the declarations may not contain: Objects in Objects, Lists
+// the declarations may not contain: Objects in Objects, Lists, "" and nil
 func validateValues(yamlData map[interface{}]interface{}) (errs []error) {
 
 	for key, value := range yamlData {

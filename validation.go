@@ -43,5 +43,8 @@ func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) {
 	missingTypeDeclarationErrs := validateTypeDeclarationCompleteness(yamlData)
 	errs = append(errs, missingTypeDeclarationErrs...)
 
+	recursiveTypeUsageErrs := validateNonRecursiveness(yamlData)
+	errs = append(errs, recursiveTypeUsageErrs...)
+
 	return
 }
