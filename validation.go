@@ -1,6 +1,7 @@
 package yamltostruct
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -28,6 +29,18 @@ func isMap(unknown interface{}) bool {
 		return true
 	}
 	return false
+}
+
+func isNil(unknown interface{}) bool {
+	return unknown == nil
+}
+
+func isEmptyString(unknown interface{}) bool {
+	if !isString(unknown) {
+		return false
+	}
+	valueString := fmt.Sprintf("%v", unknown)
+	return valueString == ""
 }
 
 func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) {

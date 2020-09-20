@@ -56,6 +56,9 @@ func validateObjectTypesDeclarationCompleteness(
 ) (errs []error) {
 
 	for _, value := range yamlObjectData {
+		if !isString(value) || isEmptyString(value) {
+			continue
+		}
 		valueString := fmt.Sprintf("%v", value)
 		extractedTypes := extractTypes(valueString)
 		undefinedTypes := findUndefinedTypesIn(extractedTypes, definedTypes)

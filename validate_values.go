@@ -12,10 +12,13 @@ func validateValues(yamlData map[interface{}]interface{}) (errs []error) {
 		keyName := fmt.Sprintf("%v", key)
 
 		if isString(value) {
+			if isEmptyString(value) {
+				errs = append(errs, newValidationErrorInvalidValue(keyName, "root"))
+			}
 			continue
 		}
 
-		if isSlice(value) {
+		if isSlice(value) || isNil(value) {
 			errs = append(errs, newValidationErrorInvalidValue(keyName, "root"))
 			continue
 		}
@@ -42,10 +45,13 @@ func validateObjectValues(yamlObjectData map[interface{}]interface{}, objectName
 		keyName := fmt.Sprintf("%v", key)
 
 		if isString(value) {
+			if isEmptyString(value) {
+				errs = append(errs, newValidationErrorInvalidValue(keyName, objectName))
+			}
 			continue
 		}
 
-		if isSlice(value) || isMap(value) {
+		if isSlice(value) || isMap(value) || isNil(value) {
 			errs = append(errs, newValidationErrorInvalidValue(keyName, objectName))
 			continue
 		}
