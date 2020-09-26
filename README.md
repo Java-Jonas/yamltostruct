@@ -8,3 +8,8 @@
 | ErrRecursiveTypeUsage | illegal recursive type detected for "{RecurringKeyNames}" | A recursive type was defined. |
 | ErrMissingPackageName | package name was not specified in the "_package" field at root level | A package name is required (e.g. "main"). |
 | ErrInvalidPackageName | name "{PackageName}" is not a valid package name | An invalid name was assigned to the "_package" field. |
+
+### TODO:
+- field type syntax validation
+- recursiveness check for map and slice values
+- allow only use of comparable types as map keys
