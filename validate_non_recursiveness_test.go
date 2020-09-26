@@ -287,32 +287,32 @@ func TestDeclarationTreeGrow(t *testing.T) {
 		assert.Contains(t, declarationPaths, []string{"baz", "bar.fof", "bas.bunt", "bant", "int"})
 	})
 
-	// 	t.Run("should build branches from yamlData root", func(t *testing.T) {
-	// 		data := map[interface{}]interface{}{
-	// 			"_package": "packageName",
-	// 			"bar": map[interface{}]interface{}{
-	// 				"foo": "baz",
-	// 				"bam": "string",
-	// 			},
-	// 			"baz": "bar",
-	// 		}
+	t.Run("should build branches from yamlData root", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar": map[interface{}]interface{}{
+				"foo": "baz",
+				"bam": "string",
+			},
+			"baz": "bar",
+		}
 
-	// 		dt := declarationTree{
-	// 			branches: []declarationBranch{},
-	// 			yamlData: data,
-	// 		}
+		dt := declarationTree{
+			branches: []declarationBranch{},
+			yamlData: data,
+		}
 
-	// 		dt.grow(declarationBranch{}, "", data, fieldLevelZero)
+		dt.grow(declarationBranch{}, "", data, fieldLevelZero)
 
-	// 		assert.Equal(t, 4, len(dt.branches))
-	// 		declarationPaths := [][]string{
-	// 			dt.branches[0].declarationPath(),
-	// 			dt.branches[1].declarationPath(),
-	// 			dt.branches[2].declarationPath(),
-	// 			dt.branches[3].declarationPath(),
-	// 		}
+		assert.Equal(t, 4, len(dt.branches))
+		declarationPaths := [][]string{
+			dt.branches[0].declarationPath(),
+			dt.branches[1].declarationPath(),
+			dt.branches[2].declarationPath(),
+			dt.branches[3].declarationPath(),
+		}
 
-	// 		assert.Contains(t, declarationPaths, []string{"baz", "bar.foo", "baz"})
-	// 		assert.Contains(t, declarationPaths, []string{"baz", "bar.bam", "string"})
-	// 	})
+		assert.Contains(t, declarationPaths, []string{"baz", "bar.foo", "baz"})
+		assert.Contains(t, declarationPaths, []string{"baz", "bar.bam", "string"})
+	})
 }
