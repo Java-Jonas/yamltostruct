@@ -26,6 +26,29 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 		assert.Equal(t, []error{}, redundantErrors)
 	})
 
+	t.Run("should fail on usage of numbers", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      1,
+			"bar":      1.2,
+			"baz": map[interface{}]interface{}{
+				"ban": 3,
+			},
+		}
+
+		actualErrors := validateYamlData(data)
+		expectedErrors := []error{
+			newValidationErrorInvalidValue("foo", "root"),
+			newValidationErrorInvalidValue("bar", "root"),
+			newValidationErrorInvalidValue("ban", "baz"),
+		}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
+
 	t.Run("should fail on usage of empty and nil values", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"_package": "packageName",
