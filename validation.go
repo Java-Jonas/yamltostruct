@@ -44,19 +44,19 @@ func isEmptyString(unknown interface{}) bool {
 }
 
 func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) {
-	valueErrors := validateValues(yamlData)
+	valueErrors := validateIllegalValue(yamlData)
 	errs = append(errs, valueErrors...)
 
-	illegalTypeNameErrors := validateTypeNames(yamlData)
+	illegalTypeNameErrors := validateIllegalTypeName(yamlData)
 	errs = append(errs, illegalTypeNameErrors...)
 
-	missingPackageDeclarationErrs := validatePackageDeclarationExistence(yamlData)
+	missingPackageDeclarationErrs := validateMissingPackageName(yamlData)
 	errs = append(errs, missingPackageDeclarationErrs...)
 
-	missingTypeDeclarationErrs := validateTypeDeclarationCompleteness(yamlData)
+	missingTypeDeclarationErrs := validateTypeNotFound(yamlData)
 	errs = append(errs, missingTypeDeclarationErrs...)
 
-	recursiveTypeUsageErrs := validateNonRecursiveness(yamlData)
+	recursiveTypeUsageErrs := validateRecursiveTypeUsage(yamlData)
 	errs = append(errs, recursiveTypeUsageErrs...)
 
 	return

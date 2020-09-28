@@ -134,7 +134,7 @@ func (tree *declarationTree) grow(branch declarationBranch, keyName string, valu
 	}
 }
 
-func validateNonRecursiveness(yamlData map[interface{}]interface{}) (errs []error) {
+func validateRecursiveTypeUsage(yamlData map[interface{}]interface{}) (errs []error) {
 	// var tree declarationTree
 	// tree.grow()
 	return

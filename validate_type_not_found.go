@@ -7,7 +7,7 @@ import (
 
 // returns errors if types are used which are not declared in the YAML file
 // order of declaration is irrelevant
-func validateTypeDeclarationCompleteness(yamlData map[interface{}]interface{}) (errs []error) {
+func validateTypeNotFound(yamlData map[interface{}]interface{}) (errs []error) {
 
 	var definedTypes []string
 
@@ -41,7 +41,7 @@ func validateTypeDeclarationCompleteness(yamlData map[interface{}]interface{}) (
 				errs = append(errs, newUnexpectedError())
 				continue
 			}
-			objectValidationErrs := validateObjectTypesDeclarationCompleteness(mapValue, keyName, definedTypes)
+			objectValidationErrs := validateTypeNotFoundObject(mapValue, keyName, definedTypes)
 			errs = append(errs, objectValidationErrs...)
 		}
 	}
@@ -49,7 +49,7 @@ func validateTypeDeclarationCompleteness(yamlData map[interface{}]interface{}) (
 	return
 }
 
-func validateObjectTypesDeclarationCompleteness(
+func validateTypeNotFoundObject(
 	yamlObjectData map[interface{}]interface{},
 	objectName string,
 	definedTypes []string,

@@ -13,7 +13,7 @@ var golangKeywords []string = []string{
 }
 
 // returns errors if type names contain illegal characters that do not adhere to golangs syntax restrictions
-func validateTypeNames(yamlData map[interface{}]interface{}) (errs []error) {
+func validateIllegalTypeName(yamlData map[interface{}]interface{}) (errs []error) {
 	for key, value := range yamlData {
 		keyName := fmt.Sprintf("%v", key)
 
@@ -27,7 +27,7 @@ func validateTypeNames(yamlData map[interface{}]interface{}) (errs []error) {
 				errs = append(errs, newUnexpectedError())
 				continue
 			}
-			objectValidationErrs := validateObjectFieldNames(mapValue, keyName)
+			objectValidationErrs := validateIllegalTypeNameObject(mapValue, keyName)
 			errs = append(errs, objectValidationErrs...)
 		}
 	}
@@ -35,7 +35,7 @@ func validateTypeNames(yamlData map[interface{}]interface{}) (errs []error) {
 	return
 }
 
-func validateObjectFieldNames(yamlObjectData map[interface{}]interface{}, objectName string) (errs []error) {
+func validateIllegalTypeNameObject(yamlObjectData map[interface{}]interface{}, objectName string) (errs []error) {
 	for key := range yamlObjectData {
 		keyName := fmt.Sprintf("%v", key)
 

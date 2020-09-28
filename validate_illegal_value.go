@@ -6,7 +6,7 @@ import (
 
 // returns errors if invalid values are used in the YAML file
 // the declarations may not contain: Objects in Objects, Lists, "" and nil
-func validateValues(yamlData map[interface{}]interface{}) (errs []error) {
+func validateIllegalValue(yamlData map[interface{}]interface{}) (errs []error) {
 
 	for key, value := range yamlData {
 		keyName := fmt.Sprintf("%v", key)
@@ -29,7 +29,7 @@ func validateValues(yamlData map[interface{}]interface{}) (errs []error) {
 				errs = append(errs, newUnexpectedError())
 				continue
 			}
-			objectValidationErrs := validateObjectValues(mapValue, keyName)
+			objectValidationErrs := validateIllegalValueObject(mapValue, keyName)
 			errs = append(errs, objectValidationErrs...)
 			continue
 		}
@@ -40,7 +40,7 @@ func validateValues(yamlData map[interface{}]interface{}) (errs []error) {
 	return
 }
 
-func validateObjectValues(yamlObjectData map[interface{}]interface{}, objectName string) (errs []error) {
+func validateIllegalValueObject(yamlObjectData map[interface{}]interface{}, objectName string) (errs []error) {
 	for key, value := range yamlObjectData {
 		keyName := fmt.Sprintf("%v", key)
 

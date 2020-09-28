@@ -5,7 +5,7 @@ import (
 )
 
 // returns errors if a package name was not declared with the key "_package" in the YAML file
-func validatePackageDeclarationExistence(yamlData map[interface{}]interface{}) (errs []error) {
+func validateMissingPackageName(yamlData map[interface{}]interface{}) (errs []error) {
 	var packageNameFound bool
 
 	for key, value := range yamlData {
