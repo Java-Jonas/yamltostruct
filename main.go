@@ -61,6 +61,16 @@ func newValidationErrorInvalidValue(keyName, parentItemName string) error {
 		),
 	)
 }
+func newValidationErrorInvalidValueString(valueString, keyName, parentItemName string) error {
+	return errors.New(
+		fmt.Sprintf(
+			"ErrInvalidValueString: value \"%s\" assigned to \"%s\" in \"%s\" is invalid",
+			valueString,
+			keyName,
+			parentItemName,
+		),
+	)
+}
 func newValidationErrorIllegalTypeName(keyName, parentItemName string) error {
 	return errors.New(
 		fmt.Sprintf(

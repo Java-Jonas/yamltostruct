@@ -14,7 +14,7 @@
 |---|---------|----------|
 | ErrIllegalTypeName | illegal type name "{KeyName}" in "{ParentObject}" | A type was named without adhering to go's syntax limitations (e.g. "fo$o", "func", "<-+"). |
 | ErrIllegalPackageName | name "{PackageName}" is not a valid package name | An invalid name was assigned to the "_package" field. |
-| ErrIllegalValueLiteral | value "{ValueLiteral}" is invalid | An invalid value was assigned to a key |
+| ErrInvalidValueString | value "{ValueString}" assigned to "{KeyName}" in "{ParantObject}" is invalid | An invalid value was assigned to a key |
 <br/> 
 
 ### logical:
