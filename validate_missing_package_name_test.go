@@ -16,7 +16,7 @@ func TestValidateYamlMissingPackageName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -34,7 +34,7 @@ func TestValidateYamlMissingPackageName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{newValidationErrorMissingPackageName()}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -51,7 +51,7 @@ func TestValidateYamlMissingPackageName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{newValidationErrorMissingPackageName()}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)

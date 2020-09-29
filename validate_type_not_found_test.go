@@ -21,7 +21,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -49,7 +49,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -69,7 +69,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			"boo": "ban",
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorTypeNotFound("ban", "baz"),
 			newValidationErrorTypeNotFound("ban", "root"),
@@ -92,7 +92,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorTypeNotFound("schtring", "root"),
 			newValidationErrorTypeNotFound("bar", "baz"),
@@ -115,7 +115,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorTypeNotFound("schtring", "root"),
 			newValidationErrorTypeNotFound("bar", "baz"),
@@ -140,7 +140,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorTypeNotFound("schtring", "root"),
 			newValidationErrorTypeNotFound("schtring", "root"),
@@ -160,7 +160,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			"foo":      "map[bar]map[ban]baz",
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorTypeNotFound("bar", "root"),
 			newValidationErrorTypeNotFound("ban", "root"),
@@ -185,7 +185,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 			"bar": "string",
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)

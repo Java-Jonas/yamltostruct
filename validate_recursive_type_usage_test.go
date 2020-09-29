@@ -21,7 +21,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -39,7 +39,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorRecursiveTypeUsage([]string{"bar"}),
 			newValidationErrorRecursiveTypeUsage([]string{"baz.ban"}),
@@ -62,7 +62,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorRecursiveTypeUsage([]string{"bar.foo", "baz.ban"}),
 		}
@@ -87,7 +87,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := logicalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorRecursiveTypeUsage([]string{"bam.baf", "baz.ban", "bar.foo"}),
 		}

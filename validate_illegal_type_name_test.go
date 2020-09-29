@@ -16,7 +16,7 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := syntacticalValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -35,7 +35,7 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := syntacticalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorIllegalTypeName("fo o", "root"),
 			newValidationErrorIllegalTypeName("ba n", "baz"),
@@ -57,7 +57,7 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := syntacticalValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -76,7 +76,7 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := syntacticalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorIllegalTypeName("break", "root"),
 			newValidationErrorIllegalTypeName("const", "baz"),
@@ -100,7 +100,7 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := syntacticalValidation(data)
 		expectedErrors := []error{
 			newValidationErrorIllegalTypeName("*", "root"),
 			newValidationErrorIllegalTypeName("<", "root"),

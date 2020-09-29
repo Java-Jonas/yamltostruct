@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateYamlInvalidValue(t *testing.T) {
+func TestValidateYamlIllegalValue(t *testing.T) {
 	t.Run("should not fail on usage of allowed values", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"_package": "packageName",
@@ -17,7 +17,7 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -36,11 +36,11 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{
-			newValidationErrorInvalidValue("foo", "root"),
-			newValidationErrorInvalidValue("bar", "root"),
-			newValidationErrorInvalidValue("ban", "baz"),
+			newValidationErrorIllegalValue("foo", "root"),
+			newValidationErrorIllegalValue("bar", "root"),
+			newValidationErrorIllegalValue("ban", "baz"),
 		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -60,12 +60,12 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{
-			newValidationErrorInvalidValue("foo", "root"),
-			newValidationErrorInvalidValue("bar", "root"),
-			newValidationErrorInvalidValue("ban", "baz"),
-			newValidationErrorInvalidValue("baf", "baz"),
+			newValidationErrorIllegalValue("foo", "root"),
+			newValidationErrorIllegalValue("bar", "root"),
+			newValidationErrorIllegalValue("ban", "baz"),
+			newValidationErrorIllegalValue("baf", "baz"),
 		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -86,10 +86,10 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 			"rant": []interface{}{},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{
-			newValidationErrorInvalidValue("mant", "baz"),
-			newValidationErrorInvalidValue("rant", "root"),
+			newValidationErrorIllegalValue("mant", "baz"),
+			newValidationErrorIllegalValue("rant", "root"),
 		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
@@ -109,9 +109,9 @@ func TestValidateYamlInvalidValue(t *testing.T) {
 			},
 		}
 
-		actualErrors := validateYamlData(data)
+		actualErrors := structuralValidation(data)
 		expectedErrors := []error{
-			newValidationErrorInvalidValue("bant", "baz"),
+			newValidationErrorIllegalValue("bant", "baz"),
 		}
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)

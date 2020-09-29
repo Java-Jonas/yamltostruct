@@ -13,13 +13,13 @@ func validateIllegalValue(yamlData map[interface{}]interface{}) (errs []error) {
 
 		if isString(value) {
 			if isEmptyString(value) {
-				errs = append(errs, newValidationErrorInvalidValue(keyName, "root"))
+				errs = append(errs, newValidationErrorIllegalValue(keyName, "root"))
 			}
 			continue
 		}
 
 		if isSlice(value) || isNil(value) {
-			errs = append(errs, newValidationErrorInvalidValue(keyName, "root"))
+			errs = append(errs, newValidationErrorIllegalValue(keyName, "root"))
 			continue
 		}
 
@@ -34,7 +34,7 @@ func validateIllegalValue(yamlData map[interface{}]interface{}) (errs []error) {
 			continue
 		}
 
-		errs = append(errs, newValidationErrorInvalidValue(keyName, "root"))
+		errs = append(errs, newValidationErrorIllegalValue(keyName, "root"))
 	}
 
 	return
@@ -46,17 +46,17 @@ func validateIllegalValueObject(yamlObjectData map[interface{}]interface{}, obje
 
 		if isString(value) {
 			if isEmptyString(value) {
-				errs = append(errs, newValidationErrorInvalidValue(keyName, objectName))
+				errs = append(errs, newValidationErrorIllegalValue(keyName, objectName))
 			}
 			continue
 		}
 
 		if isSlice(value) || isMap(value) || isNil(value) {
-			errs = append(errs, newValidationErrorInvalidValue(keyName, objectName))
+			errs = append(errs, newValidationErrorIllegalValue(keyName, objectName))
 			continue
 		}
 
-		errs = append(errs, newValidationErrorInvalidValue(keyName, objectName))
+		errs = append(errs, newValidationErrorIllegalValue(keyName, objectName))
 	}
 
 	return

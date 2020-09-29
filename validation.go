@@ -43,21 +43,54 @@ func isEmptyString(unknown interface{}) bool {
 	return valueString == ""
 }
 
-func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) {
+func structuralValidation(yamlData map[interface{}]interface{}) (errs []error) {
+
 	valueErrors := validateIllegalValue(yamlData)
 	errs = append(errs, valueErrors...)
 
-	illegalTypeNameErrors := validateIllegalTypeName(yamlData)
-	errs = append(errs, illegalTypeNameErrors...)
-
 	missingPackageDeclarationErrs := validateMissingPackageName(yamlData)
 	errs = append(errs, missingPackageDeclarationErrs...)
+
+	return
+}
+
+func syntacticalValidation(yamlData map[interface{}]interface{}) (errs []error) {
+
+	illegalTypeNameErrs := validateIllegalTypeName(yamlData)
+	errs = append(errs, illegalTypeNameErrs...)
+
+	invalidValueStringErrs := validateInvalidValueString(yamlData)
+	errs = append(errs, invalidValueStringErrs...)
+
+	return
+}
+func logicalValidation(yamlData map[interface{}]interface{}) (errs []error) {
 
 	missingTypeDeclarationErrs := validateTypeNotFound(yamlData)
 	errs = append(errs, missingTypeDeclarationErrs...)
 
 	recursiveTypeUsageErrs := validateRecursiveTypeUsage(yamlData)
 	errs = append(errs, recursiveTypeUsageErrs...)
+
+	return
+}
+
+func validateYamlData(yamlData map[interface{}]interface{}) (errs []error) {
+
+	structuralErrs := structuralValidation(yamlData)
+	errs = append(errs, structuralErrs...)
+	if len(errs) != 0 {
+		return
+	}
+
+	syntacticalErrs := syntacticalValidation(yamlData)
+	errs = append(errs, syntacticalErrs...)
+	if len(errs) != 0 {
+		return
+	}
+
+	logicalErrs := logicalValidation(yamlData)
+	errs = append(errs, logicalErrs...)
 
 	return
 }

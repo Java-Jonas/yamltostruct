@@ -52,10 +52,10 @@ func newValidationErrorMissingPackageName() error {
 func newUnexpectedError() error {
 	return errors.New("an unexpected error occured")
 }
-func newValidationErrorInvalidValue(keyName, parentItemName string) error {
+func newValidationErrorIllegalValue(keyName, parentItemName string) error {
 	return errors.New(
 		fmt.Sprintf(
-			"ErrInvalidValue: value assigned to key \"%s\" in \"%s\" is invalid",
+			"ErrIllegalValue: value assigned to key \"%s\" in \"%s\" is invalid",
 			keyName,
 			parentItemName,
 		),
