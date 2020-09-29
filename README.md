@@ -26,12 +26,6 @@
 <br/> 
 
 ### TODO:
-- field type syntax validation
-- better naming for file and validation methods
 - recursiveness check for map and slice values
 - allow only use of comparable types as map keys
 - package name validation
-- order validation in:
-    1. structural: no lists, objects in objects etc.
-    2. syntactical: no illegal type names, values
-    3. logical: no undefined types, recursiveness, non-comparable map keys etc.
