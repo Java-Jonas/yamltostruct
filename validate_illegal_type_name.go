@@ -2,7 +2,8 @@ package yamltostruct
 
 import (
 	"fmt"
-	"regexp"
+	"go/parser"
+	"go/token"
 )
 
 var golangKeywords []string = []string{
@@ -56,11 +57,10 @@ func isKeyword(literal string) bool {
 }
 
 func isIllegalTypeName(typeName string) bool {
-	re := regexp.MustCompile(`[^A-Za-z0-9_]`)
-	isIllegal := re.MatchString(typeName)
-	isKeyword := isKeyword(typeName)
-	return isIllegal || isKeyword
-}
+	sourceCodeMock := `
+	package main
+	type ` + typeName + ` string`
 
-/* TODO: keywords
- */
+	_, err := parser.ParseFile(token.NewFileSet(), "", sourceCodeMock, 0)
+	return err != nil
+}

@@ -314,5 +314,29 @@ func TestDeclarationTreeGrow(t *testing.T) {
 
 		assert.Contains(t, declarationPaths, []string{"baz", "bar.foo", "baz"})
 		assert.Contains(t, declarationPaths, []string{"baz", "bar.bam", "string"})
+		assert.Contains(t, declarationPaths, []string{"bar.bam", "string"})
+		assert.Contains(t, declarationPaths, []string{"bar.foo", "baz"})
+	})
+
+	t.Run("should build recursive branch from self referencing type", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "foo",
+		}
+
+		dt := declarationTree{
+			branches: []declarationBranch{},
+			yamlData: data,
+		}
+
+		dt.grow(declarationBranch{}, "", data, fieldLevelZero)
+
+		assert.Equal(t, 1, len(dt.branches))
+		declarationPaths := [][]string{
+			dt.branches[0].declarationPath(),
+		}
+
+		assert.Contains(t, declarationPaths, []string{"foo", "foo"})
+		assert.Equal(t, dt.branches[0].containsRecursiveness, true)
 	})
 }
