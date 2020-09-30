@@ -6,13 +6,6 @@ import (
 	"go/token"
 )
 
-var golangKeywords []string = []string{
-	"break", "default", "func", "interface", "select", "case",
-	"defer", "go", "map", "struct", "chan", "else", "goto",
-	"package", "switch", "const", "fallthrough", "if", "range",
-	"type", "continue", "for", "import", "return", "var",
-}
-
 // returns errors if type names contain illegal characters that do not adhere to golangs syntax restrictions
 func validateIllegalTypeName(yamlData map[interface{}]interface{}) (errs []error) {
 	for key, value := range yamlData {
@@ -45,15 +38,6 @@ func validateIllegalTypeNameObject(yamlObjectData map[interface{}]interface{}, o
 		}
 	}
 	return
-}
-
-func isKeyword(literal string) bool {
-	for _, keyword := range golangKeywords {
-		if literal == keyword {
-			return true
-		}
-	}
-	return false
 }
 
 func isIllegalTypeName(typeName string) bool {
