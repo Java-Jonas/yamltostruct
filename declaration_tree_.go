@@ -22,23 +22,26 @@ const (
 )
 
 type declarationSegment struct {
-	keyName    string
-	valueType  valueKind
+	keyName   string
+	valueKind valueKind
+	// TODO typeKind value/reference
 	fieldLevel fieldLevelKind
 }
 
 type declarationBranch struct {
-	segments              []declarationSegment
+	segments []declarationSegment
+	// TODO: branchClosureKind (recursiveness, reference type ..)
 	containsRecursiveness bool
 }
 
-func (branch *declarationBranch) addSegment(keyName string, valueType valueKind, fieldLevel fieldLevelKind) {
+func (branch *declarationBranch) addSegment(keyName string, valueKind valueKind, fieldLevel fieldLevelKind) {
+	// TODO: maybe this shouldn't be done here
 	for _, segment := range branch.segments {
 		if segment.keyName == keyName {
 			branch.containsRecursiveness = true
 		}
 	}
-	branch.segments = append(branch.segments, declarationSegment{keyName, valueType, fieldLevel})
+	branch.segments = append(branch.segments, declarationSegment{keyName, valueKind, fieldLevel})
 }
 
 // we list the segments' typeNames with some additional logic
@@ -51,7 +54,7 @@ func (branch declarationBranch) declarationPath() []string {
 	var parentStructName string
 
 	for _, segment := range branch.segments {
-		if segment.valueType == valueKindObject {
+		if segment.valueKind == valueKindObject {
 			wasStructField = true
 			parentStructName = segment.keyName
 			continue
@@ -113,6 +116,16 @@ func (tree *declarationTree) grow(branch declarationBranch, keyName string, valu
 		valueLiteral := fmt.Sprintf("%v", value)
 		// if a key cannot be found at root level we assume it's a basic type eg. string, int ..
 		nextValue, isNotBasicType := tree.yamlData[valueLiteral]
+
+		/*
+			if isReferencingValue(){
+				branch.addSegment(valueLiteral, valueKindString, fieldLevelZero)
+				// a reference type implies this is the end of the branch
+				tree.addBranch(branch)
+				return
+			}
+
+		*/
 
 		if !isNotBasicType {
 			branch.addSegment(valueLiteral, valueKindString, fieldLevelZero)

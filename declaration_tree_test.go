@@ -276,6 +276,37 @@ func TestDeclarationTreeGrow(t *testing.T) {
 		assert.Equal(t, dt.branches[0].containsRecursiveness, true)
 		assert.Equal(t, dt.branches[1].containsRecursiveness, true)
 	})
+
+	t.Run("should stop branches on reference type used", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar": map[interface{}]interface{}{
+				"foo": "*baz",
+				"fan": "[]baz",
+				"faz": "map[int]baz",
+			},
+			"baz": "int",
+			"ban": "bar",
+		}
+
+		dt := declarationTree{
+			branches: []declarationBranch{},
+			yamlData: data,
+		}
+
+		dt.grow(declarationBranch{}, "ban", data["ban"], firstFieldLevel)
+
+		assert.Equal(t, 3, len(dt.branches))
+		declarationPaths := [][]string{
+			dt.branches[0].declarationPath(),
+			dt.branches[1].declarationPath(),
+			dt.branches[2].declarationPath(),
+		}
+
+		assert.Contains(t, declarationPaths, []string{"ban", "bar.foo", "*baz"})
+		assert.Contains(t, declarationPaths, []string{"ban", "bar.fan", "[]baz"})
+		assert.Contains(t, declarationPaths, []string{"ban", "bar.faz", "map[int]baz"})
+	})
 }
 
 func TestDeclarationPath(t *testing.T) {
@@ -307,3 +338,33 @@ func TestDeclarationPath(t *testing.T) {
 		assert.Contains(t, declarationPaths, []string{"baz.ban", "bar.foo", "baz"})
 	})
 }
+
+// func TestTypeKind(t *testing.T) {
+// 	t.Run("typeKind is detected for reference/value types", func(t *testing.T) {
+// 		data := map[interface{}]interface{}{
+// 			"_package": "packageName",
+// 			"foo":      "int",
+// 			"bar":      "*int",
+// 			"ban":      "[]int",
+// 			"baf":      "map[int]string",
+// 		}
+
+// 		dt := declarationTree{
+// 			branches: []declarationBranch{},
+// 			yamlData: data,
+// 		}
+
+// 		dt.grow(declarationBranch{}, "", data, fieldLevelZero)
+
+// 		assert.Equal(t, 4, len(dt.branches))
+// 		declarationPaths := [][]string{
+// 			dt.branches[0].declarationPath(),
+// 			dt.branches[1].declarationPath(),
+// 			dt.branches[2].declarationPath(),
+// 			dt.branches[3].declarationPath(),
+// 		}
+
+// 		assert.Contains(t, declarationPaths, []string{"foo", "int"})
+// 		assert.Equal(t, dt.branches[0].containsRecursiveness, true)
+// 	})
+// }
