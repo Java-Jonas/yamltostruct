@@ -1,13 +1,13 @@
 package yamltostruct
 
 func validateRecursiveTypeUsage(yamlData map[interface{}]interface{}) (errs []error) {
-	tree := newDeclarationTree(yamlData)
+	pathBuilder := newPathBuilder(yamlData)
 
-	tree.grow(declarationBranch{}, "", yamlData, fieldLevelZero)
+	pathBuilder.build(declarationPath{}, "", yamlData, fieldLevelZero)
 
-	for _, branch := range tree.branches {
-		if branch.containsRecursiveness {
-			errs = append(errs, newValidationErrorRecursiveTypeUsage(branch.declarationPath()))
+	for _, path := range pathBuilder.paths {
+		if path.containsRecursiveness {
+			errs = append(errs, newValidationErrorRecursiveTypeUsage(path.joinedNames()))
 		}
 	}
 
