@@ -33,6 +33,7 @@ func TestValidateYamlInvalidValueString(t *testing.T) {
 			"b":        "map[int]string]",
 			"foo":      "int[]",
 			"bar":      "[]map[int]string",
+			"bu":       "bar",
 			"baz": map[interface{}]interface{}{
 				"ban": "[]in[t32",
 				"fan": "[]",
@@ -43,6 +44,7 @@ func TestValidateYamlInvalidValueString(t *testing.T) {
 				"g":   "[]in t32",
 				"h":   " ",
 				"i":   "[]in@t32",
+				"j":   "foo",
 			},
 		}
 
@@ -96,5 +98,7 @@ func TestIsValidValueString(t *testing.T) {
 		assert.Equal(t, isValidValueString("int[]"), false)
 		assert.Equal(t, isValidValueString("[]in[t32"), false)
 		assert.Equal(t, isValidValueString("[]"), false)
+		assert.Equal(t, isValidValueString("foo"), true)
+		assert.Equal(t, isValidValueString("bar"), true)
 	})
 }
