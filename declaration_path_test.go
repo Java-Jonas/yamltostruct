@@ -7,7 +7,7 @@ import (
 )
 
 func TestPathBuilder(t *testing.T) {
-	t.Run("should build segments with expected fieldLevels", func(t *testing.T) {
+	t.Run("should build declarations with expected fieldLevels", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"_package": "packageName",
 			"foo": map[interface{}]interface{}{
@@ -24,9 +24,9 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Equal(t, 1, len(pb.paths))
 		assert.Equal(t, []string{"foo.bar", "string"}, pb.paths[0].joinedNames())
-		assert.Contains(t, pb.paths[0].segments, declaration{"foo", valueKindObject, firstFieldLevel})
-		assert.Contains(t, pb.paths[0].segments, declaration{"bar", valueKindString, secondFieldLevel})
-		assert.Contains(t, pb.paths[0].segments, declaration{"string", valueKindString, fieldLevelZero})
+		assert.Contains(t, pb.paths[0].declarations, declaration{"foo", valueKindObject, firstFieldLevel, typeKindValue})
+		assert.Contains(t, pb.paths[0].declarations, declaration{"bar", valueKindString, secondFieldLevel, typeKindValue})
+		assert.Contains(t, pb.paths[0].declarations, declaration{"string", valueKindString, fieldLevelZero, typeKindValue})
 	})
 
 	t.Run("should build one path of flat types and exit on loop", func(t *testing.T) {

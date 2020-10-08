@@ -4,6 +4,24 @@ import (
 	"fmt"
 )
 
+type pathClosureKind int
+
+const (
+	// path ends due to it being recusrive
+	pathClosureKindRecursiveness pathClosureKind = iota
+	// path ends due to encountering a reference value
+	pathClosureKindReference
+)
+
+type typeKind int
+
+const (
+	// eg. string, int
+	typeKindValue typeKind = iota
+	// eg. *string, map[int]string, []int
+	typeKindReference
+)
+
 type yamlValueKind int
 
 const (
@@ -21,30 +39,37 @@ const (
 	secondFieldLevel
 )
 
+// name it to be more like golang.ast package naming
 type declaration struct {
 	keyName       string
 	yamlValueKind yamlValueKind
-	// TODO typeKind value/reference
-	fieldLevel fieldLevelKind
+	fieldLevel    fieldLevelKind
+	typeKind      typeKind
 }
 
 type declarationPath struct {
-	segments []declaration
-	// TODO: pathClosureKind (recursiveness, reference type ..)
+	declarations          []declaration
+	closureKind           pathClosureKind
 	containsRecursiveness bool
 }
 
-func (path *declarationPath) addSegment(keyName string, yamlValueKind yamlValueKind, fieldLevel fieldLevelKind) {
+func (path *declarationPath) addDeclaration(
+	keyName string,
+	yamlValueKind yamlValueKind,
+	fieldLevel fieldLevelKind,
+	value interface{},
+) {
 	// TODO: maybe this shouldn't be done here
-	for _, segment := range path.segments {
-		if segment.keyName == keyName {
+	for _, declaration := range path.declarations {
+		if declaration.keyName == keyName {
 			path.containsRecursiveness = true
 		}
 	}
-	path.segments = append(path.segments, declaration{keyName, yamlValueKind, fieldLevel})
+	// TODO: identify typekind
+	path.declarations = append(path.declarations, declaration{keyName, yamlValueKind, fieldLevel, typeKindValue})
 }
 
-// we list the segments' typeNames with some additional logic
+// we list the declarations' typeNames with some additional logic
 // to be more explicit (paths to nested field names will
 // be concatenated eg. "foo.bar")
 func (path declarationPath) joinedNames() []string {
@@ -53,17 +78,17 @@ func (path declarationPath) joinedNames() []string {
 	var wasStructField bool
 	var parentStructName string
 
-	for _, segment := range path.segments {
-		if segment.yamlValueKind == valueKindObject {
+	for _, declaration := range path.declarations {
+		if declaration.yamlValueKind == valueKindObject {
 			wasStructField = true
-			parentStructName = segment.keyName
+			parentStructName = declaration.keyName
 			continue
 		}
 
-		if wasStructField && segment.fieldLevel == secondFieldLevel {
-			joinedNames = append(joinedNames, parentStructName+"."+segment.keyName)
+		if wasStructField && declaration.fieldLevel == secondFieldLevel {
+			joinedNames = append(joinedNames, parentStructName+"."+declaration.keyName)
 		} else {
-			joinedNames = append(joinedNames, segment.keyName)
+			joinedNames = append(joinedNames, declaration.keyName)
 		}
 		wasStructField = false
 		parentStructName = ""
@@ -78,10 +103,10 @@ func (path declarationPath) joinedNames() []string {
 }
 
 func (path declarationPath) copySelf() declarationPath {
-	segmentsCopy := make([]declaration, len(path.segments))
-	copy(segmentsCopy, path.segments)
+	declarationsCopy := make([]declaration, len(path.declarations))
+	copy(declarationsCopy, path.declarations)
 	pathCopy := path
-	pathCopy.segments = segmentsCopy
+	pathCopy.declarations = declarationsCopy
 	return pathCopy
 }
 
@@ -107,7 +132,7 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 	}
 
 	if isString(value) {
-		path.addSegment(keyName, valueKindString, fieldLevel)
+		path.addDeclaration(keyName, valueKindString, fieldLevel, value)
 		if path.containsRecursiveness {
 			// detected recursiveness implies this is the end of the path
 			pb.addPath(path)
@@ -119,7 +144,7 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 
 		/*
 			if isReferencingValue(){
-				path.addSegment(valueLiteral, valueKindString, fieldLevelZero)
+				path.addDeclaration(valueLiteral, valueKindString, fieldLevelZero, value)
 				// a reference type implies this is the end of the path
 				pb.addPath(path)
 				return
@@ -128,17 +153,19 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 		*/
 
 		if !isNotBasicType {
-			path.addSegment(valueLiteral, valueKindString, fieldLevelZero)
+			// TODO: add isBasicType func as *string would not be recognized as basic type
+			path.addDeclaration(valueLiteral, valueKindString, fieldLevelZero, value)
 			// a basic type implies this is the end of the path
 			pb.addPath(path)
 			return
 		}
 		// we get here only when the value is a reference to a user defined type
+		// TODO: nextValue might also be *foo ... so ill have to find a different way (extract the actual type maybe)
 		pb.build(path, valueLiteral, nextValue, firstFieldLevel)
 	}
 
 	if isMap(value) {
-		path.addSegment(keyName, valueKindObject, fieldLevel)
+		path.addDeclaration(keyName, valueKindObject, fieldLevel, value)
 		if path.containsRecursiveness {
 			// detected recursiveness implies this is the end of the path
 			pb.addPath(path)
@@ -154,4 +181,8 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 			pb.build(pathCopy, _keyName, _value, fieldLevel+1)
 		}
 	}
+}
+
+func evalTypeKind(typeDefinitionString string) typeKind {
+	return typeKindReference
 }
