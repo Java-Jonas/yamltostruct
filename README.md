@@ -26,6 +26,5 @@
 <br/> 
 
 ### TODO:
-- recursiveness check for map and slice values
 - allow only use of comparable types as map keys
 - package name validation

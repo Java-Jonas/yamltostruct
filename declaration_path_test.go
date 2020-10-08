@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPathBuilder(t *testing.T) {
+func TestFieldLevels(t *testing.T) {
 	t.Run("should build declarations with expected fieldLevels", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"_package": "packageName",
@@ -24,11 +24,95 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Equal(t, 1, len(pb.paths))
 		assert.Equal(t, []string{"foo.bar", "string"}, pb.paths[0].joinedNames())
-		assert.Contains(t, pb.paths[0].declarations, declaration{"foo", valueKindObject, firstFieldLevel, typeKindValue})
-		assert.Contains(t, pb.paths[0].declarations, declaration{"bar", valueKindString, secondFieldLevel, typeKindValue})
-		assert.Contains(t, pb.paths[0].declarations, declaration{"string", valueKindString, fieldLevelZero, typeKindValue})
+		assert.Contains(t, pb.paths[0].declarations, declaration{"foo", valueKindObject, firstFieldLevel})
+		assert.Contains(t, pb.paths[0].declarations, declaration{"bar", valueKindString, secondFieldLevel})
+		assert.Contains(t, pb.paths[0].declarations, declaration{"string", valueKindString, fieldLevelZero})
+	})
+}
+
+func TestClosureKind(t *testing.T) {
+	t.Run("should have closureKind closureKindBasicType", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "bar",
+			"bar":      "string",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "foo", data["foo"], firstFieldLevel)
+		assert.Equal(t, pb.paths[0].closureKind, pathClosureKindBasicType)
 	})
 
+	t.Run("should have closureKind closureKindReference (1/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "bar",
+			"bar":      "*string",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "foo", data["foo"], firstFieldLevel)
+		assert.Equal(t, pb.paths[0].closureKind, pathClosureKindReference)
+	})
+
+	t.Run("should have closureKind closureKindReference (2/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "bar",
+			"bar":      "[]string",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "foo", data["foo"], firstFieldLevel)
+		assert.Equal(t, pb.paths[0].closureKind, pathClosureKindReference)
+	})
+
+	t.Run("should have closureKind closureKindReference (3/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "bar",
+			"bar":      "map[string]int",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "foo", data["foo"], firstFieldLevel)
+		assert.Equal(t, pb.paths[0].closureKind, pathClosureKindReference)
+	})
+
+	t.Run("should have closureKind closureKindRecursiveness", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "bar",
+			"bar":      "foo",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "foo", data["foo"], firstFieldLevel)
+		assert.Equal(t, pb.paths[0].closureKind, pathClosureKindRecursiveness)
+	})
+}
+
+func TestPathBuilder(t *testing.T) {
 	t.Run("should build one path of flat types and exit on loop", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"_package": "packageName",
@@ -46,7 +130,6 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Equal(t, 1, len(pb.paths))
 		assert.Equal(t, []string{"ban", "foo", "bar", "ban"}, pb.paths[0].joinedNames())
-		assert.Equal(t, true, pb.paths[0].containsRecursiveness)
 	})
 
 	t.Run("should build one path of flat types that exits on a basic type", func(t *testing.T) {
@@ -65,7 +148,6 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Equal(t, 1, len(pb.paths))
 		assert.Equal(t, []string{"foo", "bar", "string"}, pb.paths[0].joinedNames())
-		assert.Equal(t, false, pb.paths[0].containsRecursiveness)
 	})
 
 	t.Run("should build one path of a flat type directly", func(t *testing.T) {
@@ -83,7 +165,6 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Equal(t, 1, len(pb.paths))
 		assert.Equal(t, []string{"bar", "string"}, pb.paths[0].joinedNames())
-		assert.Equal(t, false, pb.paths[0].containsRecursiveness)
 	})
 
 	t.Run("should build one path of nested types", func(t *testing.T) {
@@ -104,7 +185,6 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Equal(t, 1, len(pb.paths))
 		assert.Equal(t, []string{"baz", "bar.foo", "baz"}, pb.paths[0].joinedNames())
-		assert.Equal(t, true, pb.paths[0].containsRecursiveness)
 	})
 
 	t.Run("should build two paths of nested types", func(t *testing.T) {
@@ -151,7 +231,6 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Equal(t, 1, len(pb.paths))
 		assert.Equal(t, []string{"bar.foo", "bar"}, pb.paths[0].joinedNames())
-		assert.Equal(t, true, pb.paths[0].containsRecursiveness)
 	})
 
 	t.Run("should build multiple paths of nested types", func(t *testing.T) {
@@ -244,7 +323,6 @@ func TestPathBuilder(t *testing.T) {
 		}
 
 		assert.Contains(t, joinedNamess, []string{"foo", "foo"})
-		assert.Equal(t, pb.paths[0].containsRecursiveness, true)
 	})
 
 	t.Run("should build 2 recursive paths on self referencing objects", func(t *testing.T) {
@@ -273,8 +351,6 @@ func TestPathBuilder(t *testing.T) {
 
 		assert.Contains(t, joinedNamess, []string{"bar.foo", "baz.ban", "bar"})
 		assert.Contains(t, joinedNamess, []string{"baz.ban", "bar.foo", "baz"})
-		assert.Equal(t, pb.paths[0].containsRecursiveness, true)
-		assert.Equal(t, pb.paths[1].containsRecursiveness, true)
 	})
 
 	t.Run("should stop paths on reference type used", func(t *testing.T) {
@@ -339,32 +415,32 @@ func TestDeclarationPath(t *testing.T) {
 	})
 }
 
-// func TestTypeKind(t *testing.T) {
-// 	t.Run("typeKind is detected for reference/value types", func(t *testing.T) {
-// 		data := map[interface{}]interface{}{
-// 			"_package": "packageName",
-// 			"foo":      "int",
-// 			"bar":      "*int",
-// 			"ban":      "[]int",
-// 			"baf":      "map[int]string",
-// 		}
+func TestContainsOnlyBasicTypes(t *testing.T) {
+	t.Run("should detect basic types", func(t *testing.T) {
+		assert.Equal(t, containsOnlyBasicTypes("string"), true)
+		assert.Equal(t, containsOnlyBasicTypes("*string"), true)
+		assert.Equal(t, containsOnlyBasicTypes("*foo"), false)
+		assert.Equal(t, containsOnlyBasicTypes("int"), true)
+		assert.Equal(t, containsOnlyBasicTypes("*int"), true)
+		assert.Equal(t, containsOnlyBasicTypes("[]string"), true)
+		assert.Equal(t, containsOnlyBasicTypes("map[int]string"), true)
+		assert.Equal(t, containsOnlyBasicTypes("map[foo]string"), false)
+		assert.Equal(t, containsOnlyBasicTypes("map[*foo]string"), false)
+		assert.Equal(t, containsOnlyBasicTypes("map[*string]string"), true)
+	})
+}
 
-// 		pb := pathBuilder{
-// 			paths: []declarationPath{},
-// 			yamlData: data,
-// 		}
-
-// 		pb.build(declarationPath{}, "", data, fieldLevelZero)
-
-// 		assert.Equal(t, 4, len(pb.paths))
-// 		joinedNamess := [][]string{
-// 			pb.paths[0].joinedNames(),
-// 			pb.paths[1].joinedNames(),
-// 			pb.paths[2].joinedNames(),
-// 			pb.paths[3].joinedNames(),
-// 		}
-
-// 		assert.Contains(t, joinedNamess, []string{"foo", "int"})
-// 		assert.Equal(t, pb.paths[0].containsRecursiveness, true)
-// 	})
-// }
+func TestIsReferenceType(t *testing.T) {
+	t.Run("should detect reference types", func(t *testing.T) {
+		assert.Equal(t, isReferenceType("string"), false)
+		assert.Equal(t, isReferenceType("*string"), true)
+		assert.Equal(t, isReferenceType("*foo"), true)
+		assert.Equal(t, isReferenceType("int"), false)
+		assert.Equal(t, isReferenceType("*int"), true)
+		assert.Equal(t, isReferenceType("[]string"), true)
+		assert.Equal(t, isReferenceType("map[int]string"), true)
+		assert.Equal(t, isReferenceType("map[foo]string"), true)
+		assert.Equal(t, isReferenceType("map[*foo]string"), true)
+		assert.Equal(t, isReferenceType("map[*string]string"), true)
+	})
+}

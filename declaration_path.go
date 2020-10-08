@@ -2,24 +2,19 @@ package yamltostruct
 
 import (
 	"fmt"
+	"regexp"
 )
 
 type pathClosureKind int
 
 const (
+	pathClosureKindUndetermined pathClosureKind = iota
 	// path ends due to it being recusrive
-	pathClosureKindRecursiveness pathClosureKind = iota
-	// path ends due to encountering a reference value
+	pathClosureKindRecursiveness
+	// path ends due to encountering a reference value (*string, []string)
 	pathClosureKindReference
-)
-
-type typeKind int
-
-const (
-	// eg. string, int
-	typeKindValue typeKind = iota
-	// eg. *string, map[int]string, []int
-	typeKindReference
+	// path ends due to encountering a basic type (string, int)
+	pathClosureKindBasicType
 )
 
 type yamlValueKind int
@@ -39,18 +34,34 @@ const (
 	secondFieldLevel
 )
 
-// name it to be more like golang.ast package naming
+// TODO: name it to be more like golang.ast package naming
 type declaration struct {
 	keyName       string
 	yamlValueKind yamlValueKind
 	fieldLevel    fieldLevelKind
-	typeKind      typeKind
 }
 
 type declarationPath struct {
-	declarations          []declaration
-	closureKind           pathClosureKind
-	containsRecursiveness bool
+	declarations []declaration
+	closureKind  pathClosureKind
+}
+
+func (path *declarationPath) setClosureKind(closureKind pathClosureKind) {
+	path.closureKind = closureKind
+}
+
+func (path declarationPath) isRecursive() bool {
+	for i, declaration := range path.declarations {
+		for j, _declaration := range path.declarations {
+			if declaration.keyName == _declaration.keyName {
+				if i == j {
+					continue
+				}
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (path *declarationPath) addDeclaration(
@@ -59,14 +70,7 @@ func (path *declarationPath) addDeclaration(
 	fieldLevel fieldLevelKind,
 	value interface{},
 ) {
-	// TODO: maybe this shouldn't be done here
-	for _, declaration := range path.declarations {
-		if declaration.keyName == keyName {
-			path.containsRecursiveness = true
-		}
-	}
-	// TODO: identify typekind
-	path.declarations = append(path.declarations, declaration{keyName, yamlValueKind, fieldLevel, typeKindValue})
+	path.declarations = append(path.declarations, declaration{keyName, yamlValueKind, fieldLevel})
 }
 
 // we list the declarations' typeNames with some additional logic
@@ -123,8 +127,7 @@ func (pb *pathBuilder) addPath(path declarationPath) {
 	pb.paths = append(pb.paths, path)
 }
 
-// a recursive function to travel through the yamlData, creating
-// a different path for each path
+// a recursive function to travel through the yamlData
 func (pb *pathBuilder) build(path declarationPath, keyName string, value interface{}, fieldLevel fieldLevelKind) {
 
 	if fieldLevel == firstFieldLevel && keyName == "_package" {
@@ -133,41 +136,39 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 
 	if isString(value) {
 		path.addDeclaration(keyName, valueKindString, fieldLevel, value)
-		if path.containsRecursiveness {
+		if path.isRecursive() {
 			// detected recursiveness implies this is the end of the path
+			path.setClosureKind(pathClosureKindRecursiveness)
 			pb.addPath(path)
 			return
 		}
 		valueLiteral := fmt.Sprintf("%v", value)
-		// if a key cannot be found at root level we assume it's a basic type eg. string, int ..
-		nextValue, isNotBasicType := pb.yamlData[valueLiteral]
+		nextValue := pb.yamlData[valueLiteral]
 
-		/*
-			if isReferencingValue(){
-				path.addDeclaration(valueLiteral, valueKindString, fieldLevelZero, value)
-				// a reference type implies this is the end of the path
-				pb.addPath(path)
-				return
-			}
-
-		*/
-
-		if !isNotBasicType {
-			// TODO: add isBasicType func as *string would not be recognized as basic type
-			path.addDeclaration(valueLiteral, valueKindString, fieldLevelZero, value)
-			// a basic type implies this is the end of the path
+		if isReferenceType(valueLiteral) {
+			path.addDeclaration(valueLiteral, valueKindString, fieldLevel, value)
+			// a reference type implies this is the end of the path
+			path.setClosureKind(pathClosureKindReference)
 			pb.addPath(path)
 			return
 		}
-		// we get here only when the value is a reference to a user defined type
-		// TODO: nextValue might also be *foo ... so ill have to find a different way (extract the actual type maybe)
+
+		if isBasicType(valueLiteral) {
+			path.addDeclaration(valueLiteral, valueKindString, fieldLevelZero, value)
+			// a basic type implies this is the end of the path
+			path.setClosureKind(pathClosureKindBasicType)
+			pb.addPath(path)
+			return
+		}
+
 		pb.build(path, valueLiteral, nextValue, firstFieldLevel)
 	}
 
 	if isMap(value) {
 		path.addDeclaration(keyName, valueKindObject, fieldLevel, value)
-		if path.containsRecursiveness {
+		if path.isRecursive() {
 			// detected recursiveness implies this is the end of the path
+			path.setClosureKind(pathClosureKindRecursiveness)
 			pb.addPath(path)
 			return
 		}
@@ -183,6 +184,27 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 	}
 }
 
-func evalTypeKind(typeDefinitionString string) typeKind {
-	return typeKindReference
+func isBasicType(typeString string) bool {
+	for _, basicType := range golangBasicTypes {
+		if basicType == typeString {
+			return true
+		}
+	}
+	return false
+}
+
+func containsOnlyBasicTypes(declarationTypeString string) bool {
+	extractTypes := extractTypes(declarationTypeString)
+	for _, extractType := range extractTypes {
+		if !isBasicType(extractType) {
+			return false
+		}
+	}
+	return true
+}
+
+// TODO: this should be revisited at some point
+func isReferenceType(declarationTypeString string) bool {
+	re := regexp.MustCompile(`[\]*]`)
+	return re.MatchString(declarationTypeString)
 }

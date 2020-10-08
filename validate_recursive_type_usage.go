@@ -6,7 +6,7 @@ func validateRecursiveTypeUsage(yamlData map[interface{}]interface{}) (errs []er
 	pathBuilder.build(declarationPath{}, "", yamlData, fieldLevelZero)
 
 	for _, path := range pathBuilder.paths {
-		if path.containsRecursiveness {
+		if path.closureKind == pathClosureKindRecursiveness {
 			errs = append(errs, newValidationErrorRecursiveTypeUsage(path.joinedNames()))
 		}
 	}
