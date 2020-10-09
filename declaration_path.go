@@ -36,7 +36,7 @@ const (
 
 // TODO: name it to be more like golang.ast package naming
 type declaration struct {
-	keyName       string
+	name          string
 	yamlValueKind yamlValueKind
 	fieldLevel    fieldLevelKind
 }
@@ -53,7 +53,7 @@ func (path *declarationPath) setClosureKind(closureKind pathClosureKind) {
 func (path declarationPath) isRecursive() bool {
 	for i, declaration := range path.declarations {
 		for j, _declaration := range path.declarations {
-			if declaration.keyName == _declaration.keyName {
+			if declaration.name == _declaration.name {
 				if i == j {
 					continue
 				}
@@ -85,14 +85,14 @@ func (path declarationPath) joinedNames() []string {
 	for _, declaration := range path.declarations {
 		if declaration.yamlValueKind == valueKindObject {
 			wasStructField = true
-			parentStructName = declaration.keyName
+			parentStructName = declaration.name
 			continue
 		}
 
 		if wasStructField && declaration.fieldLevel == secondFieldLevel {
-			joinedNames = append(joinedNames, parentStructName+"."+declaration.keyName)
+			joinedNames = append(joinedNames, parentStructName+"."+declaration.name)
 		} else {
-			joinedNames = append(joinedNames, declaration.keyName)
+			joinedNames = append(joinedNames, declaration.name)
 		}
 		wasStructField = false
 		parentStructName = ""
