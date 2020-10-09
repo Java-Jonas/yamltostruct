@@ -100,4 +100,21 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 		assert.Equal(t, []error{}, missingErrors)
 		assert.Equal(t, []error{}, redundantErrors)
 	})
+
+	t.Run("should not trigger recursive errors when references are used", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "*foo",
+			"bar":      "[]bar",
+			"baz":      "map[baz]bar",
+		}
+
+		actualErrors := logicalValidation(data)
+		expectedErrors := []error{}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
 }
