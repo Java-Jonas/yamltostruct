@@ -89,6 +89,15 @@ func newValidationErrorRecursiveTypeUsage(keysResultingInRecursiveness []string)
 		),
 	)
 }
+func newValidationErrorInvalidMapKey(mapKey, valueString string) error {
+	return errors.New(
+		fmt.Sprintf(
+			"ErrInvalidMapKey: \"%s\" in \"%s\" is not a valid map key",
+			mapKey,
+			valueString,
+		),
+	)
+}
 
 type ASTBuilder struct{}
 
