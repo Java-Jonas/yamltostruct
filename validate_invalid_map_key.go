@@ -1,6 +1,7 @@
 package yamltostruct
 
 import (
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -80,4 +81,41 @@ func findIllegalMapKeys(valueString string, yamlData map[interface{}]interface{}
 	}
 
 	return invalidMapKeys
+}
+
+func validateIllegalMapKeys(yamlData map[interface{}]interface{}) (errs []error) {
+	for _, value := range yamlData {
+
+		if isString(value) {
+			valueString := fmt.Sprintf("%v", value)
+			illegalMapKeys := findIllegalMapKeys(valueString, yamlData)
+			for _, illegalMapKey := range illegalMapKeys {
+				errs = append(errs, newValidationErrorInvalidMapKey(illegalMapKey, valueString))
+			}
+			continue
+		}
+
+		if isMap(value) {
+			mapValue, ok := value.(map[interface{}]interface{})
+			if !ok {
+				errs = append(errs, newUnexpectedError())
+				continue
+			}
+			objectValidationErrs := validateIllegalMapKeysObject(mapValue, yamlData)
+			errs = append(errs, objectValidationErrs...)
+		}
+	}
+
+	return
+}
+
+func validateIllegalMapKeysObject(yamlObjectData, yamlData map[interface{}]interface{}) (errs []error) {
+	for _, value := range yamlObjectData {
+		valueString := fmt.Sprintf("%v", value)
+		illegalMapKeys := findIllegalMapKeys(valueString, yamlData)
+		for _, illegalMapKey := range illegalMapKeys {
+			errs = append(errs, newValidationErrorInvalidMapKey(illegalMapKey, valueString))
+		}
+	}
+	return
 }

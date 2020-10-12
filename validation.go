@@ -72,6 +72,9 @@ func logicalValidation(yamlData map[interface{}]interface{}) (errs []error) {
 	recursiveTypeUsageErrs := validateRecursiveTypeUsage(yamlData)
 	errs = append(errs, recursiveTypeUsageErrs...)
 
+	invalidMapKeyErrs := validateIllegalMapKeys(yamlData)
+	errs = append(errs, invalidMapKeyErrs...)
+
 	return
 }
 
