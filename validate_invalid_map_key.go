@@ -25,18 +25,15 @@ func extracpMapDeclExpression(file *ast.File) ast.Expr {
 	return file.Decls[0].(*ast.GenDecl).Specs[0].(*ast.TypeSpec).Type
 }
 
-func findMapType(expr ast.Expr) *ast.MapType {
-	mapType, ok := expr.(*ast.MapType)
-	if ok {
+func findMapTypeRecursive(expr ast.Expr) *ast.MapType {
+	if mapType, ok := expr.(*ast.MapType); ok {
 		return mapType
 	}
-	arrayType, ok := expr.(*ast.ArrayType)
-	if ok {
-		return findMapType(arrayType.Elt)
+	if arrayType, ok := expr.(*ast.ArrayType); ok {
+		return findMapTypeRecursive(arrayType.Elt)
 	}
-	starType, ok := expr.(*ast.StarExpr)
-	if ok {
-		return findMapType(starType.X)
+	if starType, ok := expr.(*ast.StarExpr); ok {
+		return findMapTypeRecursive(starType.X)
 	}
 	return nil
 }
@@ -55,7 +52,7 @@ func extractMapKeyRecursive(mapKeys []string, mapType *ast.MapType, mockSrc stri
 		mapKeys = append(mapKeys, keyIdent.Name)
 	}
 
-	mapKeys = extractMapKeyRecursive(mapKeys, findMapType(mapType.Value), mockSrc)
+	mapKeys = extractMapKeyRecursive(mapKeys, findMapTypeRecursive(mapType.Value), mockSrc)
 
 	return mapKeys
 }
@@ -74,8 +71,4 @@ func extractMapKeys(valueString string) []string {
 	}
 
 	return extractMapKeyRecursive([]string{}, mapType, mockSrc)
-}
-
-func extractRootLevelMapDeclarations(valueString string) []string {
-	return []string{}
 }
