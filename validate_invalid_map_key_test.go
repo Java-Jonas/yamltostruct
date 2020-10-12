@@ -102,21 +102,19 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 	})
 }
 
-// func TestExtractMapKeys(t *testing.T) {
-// 	t.Run("should extract map keys from value strings", func(t *testing.T) {
-// 		assert.Equal(t, extractMapKeys("map[int]string"), []string{"int"})
-// 		assert.Equal(t, extractMapKeys("map[*int]string"), []string{"*int"})
-// 		assert.Equal(t, extractMapKeys("map[[]int]string"), []string{"[]int"})
-// 		assert.Equal(t, extractMapKeys("map[map[map[bool]int]string]float"), []string{"map[map[bool]int]string", "map[bool]int", "bool"})
-// 		// assert.Equal(t, extractMapKeys("map[int]map[float]map[string]bool"), []string{"int", "float", "string"})
-// 	})
-// }
-
-// func TestExtractRootLevelMapDeclarations(t *testing.T) {
-// 	t.Run("should extract root level map declarations", func(t *testing.T) {
-// 		assert.Equal(t, extractMapKeys("map[int]string"), []string{"map[int]string"})
-// 	})
-// }
+func TestExtractMapKeys(t *testing.T) {
+	t.Run("should extract map keys from value strings", func(t *testing.T) {
+		assert.Equal(t, extractMapKeys("map[int]string"), []string{"int"})
+		assert.Equal(t, extractMapKeys("map[*int]string"), []string{"*int"})
+		assert.Equal(t, extractMapKeys("map[[]int]string"), []string{"[]int"})
+		assert.Equal(t, extractMapKeys("map[int]map[float]map[string]bool"), []string{"int", "float", "string"})
+		assert.Equal(t, extractMapKeys("map[map[map[bool]int]string]float"), []string{"map[map[bool]int]string"})
+		assert.Equal(t, extractMapKeys("map[map[map[bool]int]string]map[map[bool]int]float"), []string{"map[map[bool]int]string", "map[bool]int"})
+		assert.Equal(t, extractMapKeys("map[int][]map[float]int"), []string{"int", "float"})
+		assert.Equal(t, extractMapKeys("map[int][][][]map[float]int"), []string{"int", "float"})
+		assert.Equal(t, extractMapKeys("map[int]*[][]map[float]int"), []string{"int", "float"})
+	})
+}
 
 func TestExtracpMapDeclExpression(t *testing.T) {
 	t.Run("should extract map decl", func(t *testing.T) {

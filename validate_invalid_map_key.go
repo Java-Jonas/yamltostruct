@@ -25,17 +25,55 @@ func extracpMapDeclExpression(file *ast.File) ast.Expr {
 	return file.Decls[0].(*ast.GenDecl).Specs[0].(*ast.TypeSpec).Type
 }
 
-func extractMapKeyRecursive(mapKeys []string, typeSpec ast.Expr) []string {
-	return []string{}
+func findMapType(expr ast.Expr) *ast.MapType {
+	mapType, ok := expr.(*ast.MapType)
+	if ok {
+		return mapType
+	}
+	arrayType, ok := expr.(*ast.ArrayType)
+	if ok {
+		return findMapType(arrayType.Elt)
+	}
+	starType, ok := expr.(*ast.StarExpr)
+	if ok {
+		return findMapType(starType.X)
+	}
+	return nil
+}
+
+func extractMapKeyRecursive(mapKeys []string, mapType *ast.MapType, mockSrc string) []string {
+
+	if mapType == nil || mapType.Key == nil {
+		return mapKeys
+	}
+
+	keyIdent, ok := mapType.Key.(*ast.Ident)
+	if !ok {
+		mapKey := mockSrc[mapType.Key.Pos()-1 : mapType.Key.End()-1]
+		mapKeys = append(mapKeys, mapKey)
+	} else {
+		mapKeys = append(mapKeys, keyIdent.Name)
+	}
+
+	mapKeys = extractMapKeyRecursive(mapKeys, findMapType(mapType.Value), mockSrc)
+
+	return mapKeys
 }
 
 func extractMapKeys(valueString string) []string {
 	mockSrc := `
 	package main
-	type mockType` + valueString
+	type mockType ` + valueString
 
 	file, _ := parser.ParseFile(token.NewFileSet(), "", mockSrc, 0)
-	return extractMapKeyRecursive([]string{}, extracpMapDeclExpression(file))
+
+	typeExpression := extracpMapDeclExpression(file)
+	mapType, ok := typeExpression.(*ast.MapType)
+	if !ok {
+		return []string{}
+	}
+
+	return extractMapKeyRecursive([]string{}, mapType, mockSrc)
 }
 
 func extractRootLevelMapDeclarations(valueString string) []string {
