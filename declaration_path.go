@@ -212,7 +212,7 @@ func isReferenceType(declarationTypeString string) bool {
 func containsUncomparableValue(typeName string, yamlData map[interface{}]interface{}) bool {
 	pathBuilder := newPathBuilder(yamlData)
 
-	pathBuilder.build(declarationPath{}, "", yamlData, fieldLevelZero)
+	pathBuilder.build(declarationPath{}, typeName, yamlData[typeName], firstFieldLevel)
 
 	isComparable := false
 	for _, path := range pathBuilder.paths {

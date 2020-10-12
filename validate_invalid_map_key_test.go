@@ -127,3 +127,119 @@ func TestExtracpMapDeclExpression(t *testing.T) {
 		assert.Equal(t, extracpMapDeclExpression(file).(*ast.MapType).Key.(*ast.Ident).Name, "int")
 	})
 }
+
+func TestContainsInvalidMapKeys(t *testing.T) {
+	t.Run("should not contain illegal map keys (1/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "string",
+			"bar":      "map[foo]int",
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[foo]int", data)
+
+		assert.Equal(t, len(illegalMapKeys), 0)
+	})
+	t.Run("should not contain illegal map keys (2/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "map[foo]int",
+			"foo": map[interface{}]interface{}{
+				"bal": "string",
+			},
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[foo]int", data)
+
+		assert.Equal(t, len(illegalMapKeys), 0)
+	})
+	t.Run("should not contain illegal map keys (3/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "map[foo]int",
+			"foo": map[interface{}]interface{}{
+				"bal": "ban",
+			},
+			"ban": map[interface{}]interface{}{
+				"baf": "int",
+			},
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[foo]int", data)
+
+		assert.Equal(t, len(illegalMapKeys), 0)
+	})
+	t.Run("should contain illegal map keys (1/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "map[*string]int",
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[*string]int", data)
+
+		assert.Equal(t, illegalMapKeys, []string{"*string"})
+	})
+	t.Run("should contain illegal map keys (2/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "[]string",
+			"bar":      "map[foo]int",
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[foo]int", data)
+
+		assert.Equal(t, illegalMapKeys, []string{"foo"})
+	})
+	t.Run("should contain illegal map keys (3/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "map[foo]int",
+			"foo": map[interface{}]interface{}{
+				"bal": "*int",
+			},
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[foo]int", data)
+
+		assert.Equal(t, illegalMapKeys, []string{"foo"})
+	})
+	t.Run("should contain illegal nested map keys (1/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "map[map[bool]float]int",
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[map[bool]float]int", data)
+
+		assert.Equal(t, illegalMapKeys, []string{"map[bool]float"})
+	})
+	t.Run("should contain illegal nested map keys (2/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "map[*string]map[foo]bool",
+			"foo": map[interface{}]interface{}{
+				"bal": "*int",
+			},
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[*string]map[foo]bool", data)
+
+		assert.Equal(t, illegalMapKeys, []string{"*string", "foo"})
+	})
+	t.Run("should contain illegal nested map keys (3/3)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"bar":      "map[ban]bool",
+			"foo": map[interface{}]interface{}{
+				"bal": "*int",
+			},
+			"ban": map[interface{}]interface{}{
+				"bunt": "foo",
+			},
+		}
+
+		illegalMapKeys := findIllegalMapKeys("map[ban]bool", data)
+
+		assert.Equal(t, illegalMapKeys, []string{"ban"})
+	})
+}

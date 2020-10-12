@@ -58,11 +58,26 @@ func extractMapKeys(valueString string) []string {
 	return extractMapKeyRecursive([]string{}, mapType, mockSrc)
 }
 
-func validateMapKeys(valueString string, yamlData map[interface{}]interface{}) []string {
+func findIllegalMapKeys(valueString string, yamlData map[interface{}]interface{}) []string {
 	mapKeys := extractMapKeys(valueString)
 	if len(mapKeys) == 0 {
 		return nil
 	}
 
-	return []string{}
+	var invalidMapKeys []string
+
+	for _, mapKey := range mapKeys {
+		var isInvalid bool
+		if isReferenceType(mapKey) {
+			isInvalid = true
+		}
+		if containsUncomparableValue(mapKey, yamlData) {
+			isInvalid = true
+		}
+		if isInvalid {
+			invalidMapKeys = append(invalidMapKeys, mapKey)
+		}
+	}
+
+	return invalidMapKeys
 }
