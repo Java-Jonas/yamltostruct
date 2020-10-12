@@ -208,3 +208,18 @@ func isReferenceType(declarationTypeString string) bool {
 	re := regexp.MustCompile(`[\]*]`)
 	return re.MatchString(declarationTypeString)
 }
+
+func containsUncomparableValue(typeName string, yamlData map[interface{}]interface{}) bool {
+	pathBuilder := newPathBuilder(yamlData)
+
+	pathBuilder.build(declarationPath{}, "", yamlData, fieldLevelZero)
+
+	isComparable := false
+	for _, path := range pathBuilder.paths {
+		if path.closureKind == pathClosureKindRecursiveness || path.closureKind == pathClosureKindReference {
+			isComparable = true
+		}
+	}
+
+	return isComparable
+}

@@ -444,3 +444,66 @@ func TestIsReferenceType(t *testing.T) {
 		assert.Equal(t, isReferenceType("map[*string]string"), true)
 	})
 }
+
+func TestContainsUncomparableValue(t *testing.T) {
+	t.Run("should not find reference value (1/2)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "string",
+			"bar":      "foo",
+		}
+
+		assert.Equal(t, containsUncomparableValue("bar", data), false)
+	})
+	t.Run("should not find reference value (2/2)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "bar",
+			"bar": map[interface{}]interface{}{
+				"ban": "string",
+				"baz": "int",
+			},
+		}
+
+		assert.Equal(t, containsUncomparableValue("foo", data), false)
+	})
+	t.Run("should find reference value (1/4)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "[]string",
+			"bar":      "foo",
+		}
+
+		assert.Equal(t, containsUncomparableValue("bar", data), true)
+	})
+	t.Run("should find reference value (2/4)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "map[int]string",
+			"bar":      "foo",
+		}
+
+		assert.Equal(t, containsUncomparableValue("bar", data), true)
+	})
+	t.Run("should find reference value (3/4)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "*string",
+			"bar":      "foo",
+		}
+
+		assert.Equal(t, containsUncomparableValue("bar", data), true)
+	})
+	t.Run("should find reference value (4/4)", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "bar",
+			"bar": map[interface{}]interface{}{
+				"ban": "[]string",
+				"baz": "int",
+			},
+		}
+
+		assert.Equal(t, containsUncomparableValue("foo", data), true)
+	})
+}

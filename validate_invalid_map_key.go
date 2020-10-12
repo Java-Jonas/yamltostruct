@@ -6,21 +6,6 @@ import (
 	"go/token"
 )
 
-// func extractMapKeyRecursive(mapKeys []string, valueString string) []string {
-// 	re := regexp.MustCompile(`map\[(.*)\]`)
-// 	match := re.FindString(valueString)
-// 	if match == "" {
-// 		return mapKeys
-// 	}
-// 	// matchLocation := re.FindIndex([]byte(valueString))
-// 	// subsequentValueString := valueString[matchLocation[1]:]
-// 	mapKey := match[4 : len(match)-1]
-// 	mapKeys = append(mapKeys, mapKey)
-// 	mapKeys = extractMapKeyRecursive(mapKeys, mapKey)
-// 	// mapKeys = extractMapKeyRecursive(mapKeys, subsequentValueString)
-// 	return mapKeys
-// }
-
 func extracpMapDeclExpression(file *ast.File) ast.Expr {
 	return file.Decls[0].(*ast.GenDecl).Specs[0].(*ast.TypeSpec).Type
 }
@@ -71,4 +56,13 @@ func extractMapKeys(valueString string) []string {
 	}
 
 	return extractMapKeyRecursive([]string{}, mapType, mockSrc)
+}
+
+func validateMapKeys(valueString string, yamlData map[interface{}]interface{}) []string {
+	mapKeys := extractMapKeys(valueString)
+	if len(mapKeys) == 0 {
+		return nil
+	}
+
+	return []string{}
 }
