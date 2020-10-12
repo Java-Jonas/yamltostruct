@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go/ast"
+	"go/parser"
+	"go/token"
 )
 
 func TestValidateYamlDataInvalidMapKey(t *testing.T) {
@@ -99,12 +102,30 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 	})
 }
 
-func TestExtractMapKeys(t *testing.T) {
-	t.Run("should extract map keys from value strings", func(t *testing.T) {
-		assert.Equal(t, "map[int]string", []string{"int"})
-		assert.Equal(t, "map[*int]string", []string{"*int"})
-		assert.Equal(t, "map[[]int]string", []string{"[]int"})
-		assert.Equal(t, "map[map[map[bool]int]string]float", []string{"bool", "map[bool]int", "map[map[bool]int]string"})
-		assert.Equal(t, "map[int]map[float]map[string]bool", []string{"int", "float", "string"})
+// func TestExtractMapKeys(t *testing.T) {
+// 	t.Run("should extract map keys from value strings", func(t *testing.T) {
+// 		assert.Equal(t, extractMapKeys("map[int]string"), []string{"int"})
+// 		assert.Equal(t, extractMapKeys("map[*int]string"), []string{"*int"})
+// 		assert.Equal(t, extractMapKeys("map[[]int]string"), []string{"[]int"})
+// 		assert.Equal(t, extractMapKeys("map[map[map[bool]int]string]float"), []string{"map[map[bool]int]string", "map[bool]int", "bool"})
+// 		// assert.Equal(t, extractMapKeys("map[int]map[float]map[string]bool"), []string{"int", "float", "string"})
+// 	})
+// }
+
+// func TestExtractRootLevelMapDeclarations(t *testing.T) {
+// 	t.Run("should extract root level map declarations", func(t *testing.T) {
+// 		assert.Equal(t, extractMapKeys("map[int]string"), []string{"map[int]string"})
+// 	})
+// }
+
+func TestExtracpMapDeclExpression(t *testing.T) {
+	t.Run("should extract map decl", func(t *testing.T) {
+		mockSrc := `
+	package main
+	type mockType map[int]string
+	`
+
+		file, _ := parser.ParseFile(token.NewFileSet(), "", mockSrc, 0)
+		assert.Equal(t, extracpMapDeclExpression(file).(*ast.MapType).Key.(*ast.Ident).Name, "int")
 	})
 }

@@ -28,3 +28,4 @@
 ### TODO:
 - allow only use of comparable types as map keys
 - package name validation
+- implement array support
