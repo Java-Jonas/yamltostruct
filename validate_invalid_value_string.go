@@ -19,7 +19,7 @@ func validateInvalidValueString(yamlData map[interface{}]interface{}) (errs []er
 	for key, value := range yamlData {
 		keyName := fmt.Sprintf("%v", key)
 
-		if keyName == "_package" {
+		if keyName == packageNameKey {
 			continue
 		}
 

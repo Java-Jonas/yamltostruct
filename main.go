@@ -49,6 +49,14 @@ func newValidationErrorTypeNotFound(missingTypeLiteral, parentItemName string) e
 func newValidationErrorMissingPackageName() error {
 	return errors.New("ErrMissingPackageName: package name was not specified in the \"_package\" field at root level")
 }
+func newValidationErrorIllegalPackageName(packageName string) error {
+	return errors.New(
+		fmt.Sprintf(
+			"ErrIllegalPackageName: name \"%s\" is not a valid package name",
+			packageName,
+		),
+	)
+}
 func newUnexpectedError() error {
 	return errors.New("an unexpected error occured")
 }

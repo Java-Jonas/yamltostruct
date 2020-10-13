@@ -5,6 +5,10 @@ import (
 	"reflect"
 )
 
+const (
+	packageNameKey string = "_package"
+)
+
 var golangBasicTypes = []string{"string", "bool", "int8", "uint8", "byte", "int16", "uint16", "int32", "rune", "uint32", "int64", "uint64", "int", "uint", "uintptr", "float32", "float64", "complex64", "complex128"}
 
 func isString(unknown interface{}) bool {
@@ -62,8 +66,12 @@ func syntacticalValidation(yamlData map[interface{}]interface{}) (errs []error) 
 	invalidValueStringErrs := validateInvalidValueString(yamlData)
 	errs = append(errs, invalidValueStringErrs...)
 
+	illegalPackageNameErrors := validateIllegalPackageName(yamlData)
+	errs = append(errs, illegalPackageNameErrors...)
+
 	return
 }
+
 func logicalValidation(yamlData map[interface{}]interface{}) (errs []error) {
 
 	missingTypeDeclarationErrs := validateTypeNotFound(yamlData)

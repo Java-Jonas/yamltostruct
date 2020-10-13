@@ -13,7 +13,7 @@ func validateTypeNotFound(yamlData map[interface{}]interface{}) (errs []error) {
 
 	for key := range yamlData {
 		keyName := fmt.Sprintf("%v", key)
-		if keyName == "_package" {
+		if keyName == packageNameKey {
 			continue
 		}
 		definedTypes = append(definedTypes, keyName)
@@ -22,7 +22,7 @@ func validateTypeNotFound(yamlData map[interface{}]interface{}) (errs []error) {
 	for key, value := range yamlData {
 		keyName := fmt.Sprintf("%v", key)
 
-		if keyName == "_package" {
+		if keyName == packageNameKey {
 			continue
 		}
 

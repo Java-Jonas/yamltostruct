@@ -130,7 +130,7 @@ func (pb *pathBuilder) addPath(path declarationPath) {
 // a recursive function to travel through the yamlData
 func (pb *pathBuilder) build(path declarationPath, keyName string, value interface{}, fieldLevel fieldLevelKind) {
 
-	if fieldLevel == firstFieldLevel && keyName == "_package" {
+	if fieldLevel == firstFieldLevel && keyName == packageNameKey {
 		return
 	}
 

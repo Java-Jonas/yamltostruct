@@ -11,7 +11,7 @@ func validateMissingPackageName(yamlData map[interface{}]interface{}) (errs []er
 	for key, value := range yamlData {
 		keyName := fmt.Sprintf("%v", key)
 
-		if keyName == "_package" && isString(value) {
+		if keyName == packageNameKey && isString(value) {
 			packageNameFound = true
 		}
 	}
