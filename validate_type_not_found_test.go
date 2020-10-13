@@ -44,7 +44,6 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 				"bunt": "[]baf",
 				"bap":  "map[bar]foo",
 				"bal":  "***bar",
-				"lap":  "map[**bar]**foo",
 				"slap": "**[]**baf",
 			},
 		}

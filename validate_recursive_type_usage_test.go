@@ -106,7 +106,6 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 			"_package": "packageName",
 			"foo":      "*foo",
 			"bar":      "[]bar",
-			"baz":      "map[baz]bar",
 		}
 
 		actualErrors := logicalValidation(data)
