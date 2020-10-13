@@ -115,3 +115,12 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 		assert.Equal(t, []error{}, redundantErrors)
 	})
 }
+
+func TestIsIllegalTypeName(t *testing.T) {
+	t.Run("should return false if the type names are valid", func(t *testing.T) {
+		assert.Equal(t, false, isIllegalTypeName("foo_"), isIllegalTypeName("b_ar"), isIllegalTypeName("BA2Z"))
+	})
+	t.Run("should return true if the type names are illegal", func(t *testing.T) {
+		assert.Equal(t, true, isIllegalTypeName("fo o"), isIllegalTypeName("b*ar"), isIllegalTypeName("B+2Z"))
+	})
+}
