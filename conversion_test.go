@@ -2,13 +2,14 @@ package yamltostruct
 
 import (
 	"bytes"
-	"github.com/stretchr/testify/assert"
 	"go/ast"
 	"go/printer"
 	"go/token"
 	"strings"
 	"testing"
 	"unicode"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // "ab c  de\nf" => "ab c de f"
@@ -51,7 +52,7 @@ func printAST(ast *ast.File) string {
 }
 
 func toNormalizedSourceCode(inputYamlData map[interface{}]interface{}, expectedSourceCode string) (string, string) {
-	inputAST := NewASTBuilder().build(inputYamlData)
+	inputAST := convertToAST(inputYamlData)
 	inputSourceCode := printAST(inputAST)
 	normalizedInput := normalizeWhitespace(inputSourceCode)
 	normalizedExpectedOutput := normalizeWhitespace(expectedSourceCode)
@@ -94,7 +95,7 @@ func TestConvertToASTBasicCases(t *testing.T) {
 		}
 		expectedOutput := `
 		package foobar
-		type foo struct {
+		type foo struct{
 			bar int
 		}
 		`
