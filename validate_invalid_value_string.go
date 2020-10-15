@@ -31,11 +31,7 @@ func validateInvalidValueString(yamlData map[interface{}]interface{}) (errs []er
 		}
 
 		if isMap(value) {
-			mapValue, ok := value.(map[interface{}]interface{})
-			if !ok {
-				errs = append(errs, newUnexpectedError())
-				continue
-			}
+			mapValue := value.(map[interface{}]interface{})
 			objectValidationErrs := validateInvalidValueStringObject(mapValue, keyName)
 			errs = append(errs, objectValidationErrs...)
 		}

@@ -16,11 +16,7 @@ func validateIllegalTypeName(yamlData map[interface{}]interface{}) (errs []error
 		}
 
 		if isMap(value) {
-			mapValue, ok := value.(map[interface{}]interface{})
-			if !ok {
-				errs = append(errs, newUnexpectedError())
-				continue
-			}
+			mapValue := value.(map[interface{}]interface{})
 			objectValidationErrs := validateIllegalTypeNameObject(mapValue, keyName)
 			errs = append(errs, objectValidationErrs...)
 		}

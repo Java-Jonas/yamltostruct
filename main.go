@@ -57,9 +57,6 @@ func newValidationErrorIllegalPackageName(packageName string) error {
 		),
 	)
 }
-func newUnexpectedError() error {
-	return errors.New("an unexpected error occured")
-}
 func newValidationErrorIllegalValue(keyName, parentItemName string) error {
 	return errors.New(
 		fmt.Sprintf(
