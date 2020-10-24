@@ -5,14 +5,27 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"sort"
 )
+
+func alphabeticalRange(data map[interface{}]interface{}, fn func(key string, value interface{})) {
+	var keys []string
+	for key := range data {
+		keyLiteral := fmt.Sprintf("%v", key)
+		keys = append(keys, keyLiteral)
+	}
+
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		fn(key, data[key])
+	}
+}
 
 func convertToAST(yamlData map[interface{}]interface{}) *ast.File {
 	sw := &sourceWriter{}
 
-	for key, value := range yamlData {
-		keyName := fmt.Sprintf("%v", key)
-
+	alphabeticalRange(yamlData, func(keyName string, value interface{}) {
 		if isString(value) {
 			valueString := fmt.Sprintf("%v", value)
 			if keyName == packageNameKey {
@@ -20,20 +33,20 @@ func convertToAST(yamlData map[interface{}]interface{}) *ast.File {
 			} else {
 				sw.addNamedType(keyName, valueString)
 			}
-			continue
+			return
 		}
 
 		if isMap(value) {
 			mapValue := value.(map[interface{}]interface{})
 			sw.startStructType(keyName)
-			for _key, _value := range mapValue {
+			alphabeticalRange(mapValue, func(_key string, _value interface{}) {
 				_valueString := fmt.Sprintf("%v", _value)
 				_keyName := fmt.Sprintf("%v", _key)
 				sw.addStructField(_keyName, _valueString)
-			}
+			})
 			sw.closeStructType()
 		}
-	}
+	})
 
 	return sw.parse()
 }

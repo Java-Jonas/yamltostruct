@@ -2,6 +2,7 @@ package yamltostruct
 
 import (
 	"bytes"
+	"fmt"
 	"go/ast"
 	"go/printer"
 	"go/token"
@@ -79,8 +80,8 @@ func TestConvertToASTBasicCases(t *testing.T) {
 		}
 		expectedOutput := `
 		package foobar
-		type foo string
 		type bar int
+		type foo string
 		`
 		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
 
@@ -102,5 +103,29 @@ func TestConvertToASTBasicCases(t *testing.T) {
 		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
 
 		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
+	})
+}
+
+func TestAlphabeticalRange(t *testing.T) {
+	t.Run("should loop in alphabetical range", func(t *testing.T) {
+		input := map[interface{}]interface{}{
+			"a": "1",
+			"b": "2",
+			"c": "3",
+		}
+
+		for i := 0; i < 100; i++ {
+			var receivedKeys []string
+			var receivedValues []string
+			alphabeticalRange(input, func(key string, value interface{}) {
+				_key := fmt.Sprintf("%v", key)
+				receivedKeys = append(receivedKeys, _key)
+				_value := fmt.Sprintf("%v", value)
+				receivedValues = append(receivedValues, _value)
+			})
+			assert.Equal(t, receivedKeys, []string{"a", "b", "c"})
+			assert.Equal(t, receivedValues, []string{"1", "2", "3"})
+		}
+
 	})
 }
