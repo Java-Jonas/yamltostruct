@@ -1,28 +1,12 @@
 package yamltostruct
 
 import (
-	"errors"
-	"fmt"
 	"go/ast"
-	"go/parser"
-	"go/token"
-	"io/ioutil"
-	"strings"
 
 	"gopkg.in/yaml.v2"
 )
 
-func readYamlFile(filePath string) ([]byte, error) {
-	yamlDataBytes, err := ioutil.ReadFile(filePath)
-
-	if err != nil {
-		return yamlDataBytes, err
-	}
-
-	return yamlDataBytes, err
-}
-
-func ConvertToDataMap(yamlDataBytes []byte) (map[interface{}]interface{}, error) {
+func convertToDataMap(yamlDataBytes []byte) (map[interface{}]interface{}, error) {
 	yamlData := make(map[interface{}]interface{})
 	err := yaml.Unmarshal(yamlDataBytes, &yamlData)
 
@@ -33,87 +17,18 @@ func ConvertToDataMap(yamlDataBytes []byte) (map[interface{}]interface{}, error)
 	return yamlData, err
 }
 
-func Unmarshal(yamlDataBytes []byte) ([]byte, error) {
-	return []byte("test"), nil
-}
+func Unmarshal(yamlDataBytes []byte) (*ast.File, []error) {
+	yamlData, err := convertToDataMap(yamlDataBytes)
+	if err != nil {
+		return nil, []error{err}
+	}
 
-func newValidationErrorTypeNotFound(missingTypeLiteral, parentItemName string) error {
-	return errors.New(
-		fmt.Sprintf(
-			"ErrTypeNotFound: type with name \"%s\" in \"%s\" was not found",
-			missingTypeLiteral,
-			parentItemName,
-		),
-	)
-}
-func newValidationErrorMissingPackageName() error {
-	return errors.New("ErrMissingPackageName: package name was not specified in the \"_package\" field at root level")
-}
-func newValidationErrorIllegalPackageName(packageName string) error {
-	return errors.New(
-		fmt.Sprintf(
-			"ErrIllegalPackageName: name \"%s\" is not a valid package name",
-			packageName,
-		),
-	)
-}
-func newValidationErrorIllegalValue(keyName, parentItemName string) error {
-	return errors.New(
-		fmt.Sprintf(
-			"ErrIllegalValue: value assigned to key \"%s\" in \"%s\" is invalid",
-			keyName,
-			parentItemName,
-		),
-	)
-}
-func newValidationErrorInvalidValueString(valueString, keyName, parentItemName string) error {
-	return errors.New(
-		fmt.Sprintf(
-			"ErrInvalidValueString: value \"%s\" assigned to \"%s\" in \"%s\" is invalid",
-			valueString,
-			keyName,
-			parentItemName,
-		),
-	)
-}
-func newValidationErrorIllegalTypeName(keyName, parentItemName string) error {
-	return errors.New(
-		fmt.Sprintf(
-			"ErrIllegalTypeName: illegal type name \"%s\" in \"%s\"",
-			keyName,
-			parentItemName,
-		),
-	)
-}
-func newValidationErrorRecursiveTypeUsage(keysResultingInRecursiveness []string) error {
-	keys := strings.Join(keysResultingInRecursiveness, "->")
-	return errors.New(
-		fmt.Sprintf(
-			"ErrRecursiveTypeUsage: illegal recursive type detected for \"%s\"",
-			keys,
-		),
-	)
-}
-func newValidationErrorInvalidMapKey(mapKey, valueString string) error {
-	return errors.New(
-		fmt.Sprintf(
-			"ErrInvalidMapKey: \"%s\" in \"%s\" is not a valid map key",
-			mapKey,
-			valueString,
-		),
-	)
-}
+	validationErrs := validateYamlData(yamlData)
+	if len(validationErrs) > 0 {
+		return nil, validationErrs
+	}
 
-type ASTBuilder struct{}
+	file := convertToAST(yamlData)
 
-func NewASTBuilder() *ASTBuilder {
-	return &ASTBuilder{}
-}
-
-func (a *ASTBuilder) build(yamlData map[interface{}]interface{}) *ast.File {
-	src := `
-	package main
-	`
-	f, _ := parser.ParseFile(token.NewFileSet(), "", src, 0)
-	return f
+	return file, nil
 }
