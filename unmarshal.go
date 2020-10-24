@@ -30,5 +30,5 @@ func Unmarshal(yamlDataBytes []byte) (*ast.File, []error) {
 
 	file := convertToAST(yamlData)
 
-	return file, nil
+	return file, make([]error, 0)
 }
