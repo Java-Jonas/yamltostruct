@@ -116,4 +116,56 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 		assert.Equal(t, []error{}, missingErrors)
 		assert.Equal(t, []error{}, redundantErrors)
 	})
+
+	t.Run("should fail on usage of directly recursive types", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"foo":      "foo",
+		}
+
+		actualErrors := logicalValidation(data)
+		expectedErrors := []error{
+			newValidationErrorRecursiveTypeUsage([]string{"foo", "foo"}),
+		}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
+
+	t.Run("should not trigger recursive errors when field has same name as type in object", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"id":       "string",
+			"person": map[interface{}]interface{}{
+				"id": "id",
+			},
+		}
+
+		actualErrors := logicalValidation(data)
+		expectedErrors := []error{}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
+
+	t.Run("should not trigger recursive errors when field has same name as parent object", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"_package": "packageName",
+			"person": map[interface{}]interface{}{
+				"person": "string",
+			},
+		}
+
+		actualErrors := logicalValidation(data)
+		expectedErrors := []error{}
+
+		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
+
+		assert.Equal(t, []error{}, missingErrors)
+		assert.Equal(t, []error{}, redundantErrors)
+	})
 }

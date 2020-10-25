@@ -53,10 +53,13 @@ func (path *declarationPath) setClosureKind(closureKind pathClosureKind) {
 func (path declarationPath) isRecursive() bool {
 	for i, declaration := range path.declarations {
 		for j, _declaration := range path.declarations {
+			if i == j {
+				continue
+			}
+			if declaration.fieldLevel != firstFieldLevel || _declaration.fieldLevel != firstFieldLevel {
+				continue
+			}
 			if declaration.name == _declaration.name {
-				if i == j {
-					continue
-				}
 				return true
 			}
 		}
