@@ -1,3 +1,62 @@
+
+## About
+yamltostruct lets you define golang types in yaml format and unmarshals it into an [AST](https://golang.org/pkg/go/ast/#File).
+<br/>
+<br/>
+## Motivation
+This was a project for me to get more comfortable with [TDD](https://en.wikipedia.org/wiki/Test-driven_development) and golang. I don't think the library itself is very useful and I am aware that there are ways I could have achieved the same functionality with a lot less effort. However this was more of a fun/educational project and it has fulfilled its purpose.
+<br/>
+<br/>
+## Usage
+```
+package main
+
+import (
+        "fmt"
+        "go/ast"
+        "go/printer"
+        "go/token"
+        "os"
+
+        "github.com/Java-Jonas/yamltostruct"
+)
+
+func logErrs(errs []error) {
+        for _, err := range errs {
+                fmt.Println(err.Error())
+        }
+}
+
+func main() {
+        yamlData := []byte(`
+_package: entities
+name:
+  first: string
+  last: string
+id: string
+person:
+  name: name
+  age: int
+  id: id
+`)
+
+        file, errs := yamltostruct.Unmarshal(yamlData)
+
+        if len(errs) > 0 {
+                logErrs(errs)
+                return
+        }
+
+        // pretty print ast
+        ast.Print(token.NewFileSet(), file)
+        fmt.Println("")
+        // print as golang source code
+        printer.Fprint(os.Stdout, token.NewFileSet(), file)
+}
+```
+<br/>
+
+
 ## Validation Error Messages
 <br/> 
 
