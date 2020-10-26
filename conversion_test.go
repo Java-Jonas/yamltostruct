@@ -43,9 +43,9 @@ func normalizeWhitespace(str string) string {
 	return b.String()
 }
 
-func printAST(ast *ast.File) string {
+func printDecls(decls []ast.Decl) string {
 	var buf bytes.Buffer
-	err := printer.Fprint(&buf, token.NewFileSet(), ast)
+	err := printer.Fprint(&buf, token.NewFileSet(), decls)
 	if err != nil {
 		panic(err)
 	}
@@ -54,52 +54,35 @@ func printAST(ast *ast.File) string {
 
 func toNormalizedSourceCode(inputYamlData map[interface{}]interface{}, expectedSourceCode string) (string, string) {
 	inputAST := convertToAST(inputYamlData)
-	inputSourceCode := printAST(inputAST)
+	inputSourceCode := printDecls(inputAST.Decls)
 	normalizedInput := normalizeWhitespace(inputSourceCode)
 	normalizedExpectedOutput := normalizeWhitespace(expectedSourceCode)
 	return normalizedInput, normalizedExpectedOutput
 }
 
 func TestConvertToASTBasicCases(t *testing.T) {
-	t.Run("should convert specified package name", func(t *testing.T) {
-		input := map[interface{}]interface{}{
-			"_package": "foobar",
-		}
-		expectedOutput := `
-		package foobar
-		`
-		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
-
-		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
-	})
 	t.Run("should convert named types", func(t *testing.T) {
 		input := map[interface{}]interface{}{
-			"_package": "foobar",
-			"foo":      "string",
-			"bar":      "int",
+			"foo": "string",
+			"bar": "int",
 		}
 		expectedOutput := `
-		package foobar
 		type bar int
-		type foo string
-		`
+		type foo string`
 		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
 
 		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
 	})
 	t.Run("should convert struct types", func(t *testing.T) {
 		input := map[interface{}]interface{}{
-			"_package": "foobar",
 			"foo": map[interface{}]interface{}{
 				"bar": "int",
 			},
 		}
 		expectedOutput := `
-		package foobar
 		type foo struct{
 			bar int
-		}
-		`
+		}`
 		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
 
 		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)

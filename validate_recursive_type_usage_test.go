@@ -9,7 +9,6 @@ import (
 func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 	t.Run("should not fail on usage of non-recursive types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 			},
@@ -32,8 +31,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 	t.Run("should fail when type is used in own declaration", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "bar",
+			"bar": "bar",
 			"baz": map[interface{}]interface{}{
 				"ban": "baz",
 			},
@@ -53,7 +51,6 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 	t.Run("should fail on usage of recursive types (1/2)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 			},
@@ -76,7 +73,6 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 	t.Run("should fail on usage of recursive types (2/2)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "bam",
 			},
@@ -103,9 +99,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 	t.Run("should not trigger recursive errors when references are used", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "*foo",
-			"bar":      "[]bar",
+			"foo": "*foo",
+			"bar": "[]bar",
 		}
 
 		actualErrors := logicalValidation(data)
@@ -119,8 +114,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 	t.Run("should fail on usage of directly recursive types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "foo",
+			"foo": "foo",
 		}
 
 		actualErrors := logicalValidation(data)
@@ -136,8 +130,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 	t.Run("should not trigger recursive errors when field has same name as type in object", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"id":       "string",
+			"id": "string",
 			"person": map[interface{}]interface{}{
 				"id": "id",
 			},
@@ -154,7 +147,6 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 	t.Run("should not trigger recursive errors when field has same name as parent object", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"person": map[interface{}]interface{}{
 				"person": "string",
 			},

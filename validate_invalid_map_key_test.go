@@ -12,9 +12,8 @@ import (
 func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 	t.Run("should not fail on usage of valid map keys", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "string",
-			"bal":      "map[foo]int",
+			"foo": "string",
+			"bal": "map[foo]int",
 			"baz": map[interface{}]interface{}{
 				"bal": "map[foo]int",
 			},
@@ -31,10 +30,9 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 
 	t.Run("should fail on usage of reference type directly as map key", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "string",
-			"bar":      "map[*foo]int",
-			"buf":      "map[map[int]bool]string",
+			"foo": "string",
+			"bar": "map[*foo]int",
+			"buf": "map[map[int]bool]string",
 			"baz": map[interface{}]interface{}{
 				"ban": "map[[]foo]int",
 			},
@@ -55,11 +53,10 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 
 	t.Run("should fail on usage of reference type as map key", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "[]string",
-			"ban":      "*int",
-			"bunt":     "map[int]string",
-			"bar":      "map[foo]int",
+			"foo":  "[]string",
+			"ban":  "*int",
+			"bunt": "map[int]string",
+			"bar":  "map[foo]int",
 			"baz": map[interface{}]interface{}{
 				"bal": "map[ban]int",
 				"buf": "map[bunt]int",
@@ -81,9 +78,8 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 
 	t.Run("should fail on usage of reference type as map key in nested map", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "[]string",
-			"bar":      "map[int]map[foo]int",
+			"foo": "[]string",
+			"bar": "map[int]map[foo]int",
 			"baz": map[interface{}]interface{}{
 				"bal": "map[bar]int",
 			},
@@ -131,9 +127,8 @@ func TestExtracpMapDeclExpression(t *testing.T) {
 func TestContainsInvalidMapKeys(t *testing.T) {
 	t.Run("should not contain illegal map keys (1/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "string",
-			"bar":      "map[foo]int",
+			"foo": "string",
+			"bar": "map[foo]int",
 		}
 
 		illegalMapKeys := findIllegalMapKeys("map[foo]int", data)
@@ -142,8 +137,7 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should not contain illegal map keys (2/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "map[foo]int",
+			"bar": "map[foo]int",
 			"foo": map[interface{}]interface{}{
 				"bal": "string",
 			},
@@ -155,8 +149,7 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should not contain illegal map keys (3/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "map[foo]int",
+			"bar": "map[foo]int",
 			"foo": map[interface{}]interface{}{
 				"bal": "ban",
 			},
@@ -171,8 +164,7 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should contain illegal map keys (1/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "map[*string]int",
+			"bar": "map[*string]int",
 		}
 
 		illegalMapKeys := findIllegalMapKeys("map[*string]int", data)
@@ -181,9 +173,8 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should contain illegal map keys (2/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "[]string",
-			"bar":      "map[foo]int",
+			"foo": "[]string",
+			"bar": "map[foo]int",
 		}
 
 		illegalMapKeys := findIllegalMapKeys("map[foo]int", data)
@@ -192,8 +183,7 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should contain illegal map keys (3/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "map[foo]int",
+			"bar": "map[foo]int",
 			"foo": map[interface{}]interface{}{
 				"bal": "*int",
 			},
@@ -205,8 +195,7 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should contain illegal nested map keys (1/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "map[map[bool]float]int",
+			"bar": "map[map[bool]float]int",
 		}
 
 		illegalMapKeys := findIllegalMapKeys("map[map[bool]float]int", data)
@@ -215,8 +204,7 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should contain illegal nested map keys (2/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "map[*string]map[foo]bool",
+			"bar": "map[*string]map[foo]bool",
 			"foo": map[interface{}]interface{}{
 				"bal": "*int",
 			},
@@ -228,8 +216,7 @@ func TestContainsInvalidMapKeys(t *testing.T) {
 	})
 	t.Run("should contain illegal nested map keys (3/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "map[ban]bool",
+			"bar": "map[ban]bool",
 			"foo": map[interface{}]interface{}{
 				"bal": "*int",
 			},

@@ -17,7 +17,7 @@ func convertToDataMap(yamlDataBytes []byte) (map[interface{}]interface{}, error)
 	return yamlData, err
 }
 
-func Unmarshal(yamlDataBytes []byte) (*ast.File, []error) {
+func Unmarshal(yamlDataBytes []byte) ([]ast.Decl, []error) {
 	yamlData, err := convertToDataMap(yamlDataBytes)
 	if err != nil {
 		return nil, []error{err}
@@ -30,5 +30,5 @@ func Unmarshal(yamlDataBytes []byte) (*ast.File, []error) {
 
 	file := convertToAST(yamlData)
 
-	return file, make([]error, 0)
+	return file.Decls, make([]error, 0)
 }

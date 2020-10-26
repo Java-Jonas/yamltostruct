@@ -10,8 +10,7 @@ import (
 func TestUnmarshal(t *testing.T) {
 	t.Run("should unmarshal without errors", func(t *testing.T) {
 		yamlDataBytes := []byte(
-			`_package: hello
-foo: string
+			`foo: string
 bar: 
   baz: int
   ban: "[]foo"`,
@@ -21,15 +20,13 @@ bar:
 
 		assert.Equal(t, errs, []error{})
 
-		output := normalizeWhitespace(printAST(file))
+		output := normalizeWhitespace(printDecls(file))
 		expectedOutput := normalizeWhitespace(
-			`package hello
-			type bar struct {
+			`type bar struct {
 				ban []foo
 				baz int
 			}
-			type foo string
-			`,
+			type foo string`,
 		)
 
 		assert.Equal(t, output, expectedOutput)
@@ -37,16 +34,15 @@ bar:
 
 	t.Run("should return error", func(t *testing.T) {
 		yamlDataBytes := []byte(
-			`_package: hello
-foo: string
+			`foo: string
 bar: 
   baz: boo
   ban: "[]bool"`,
 		)
 
-		file, errs := Unmarshal(yamlDataBytes)
+		decls, errs := Unmarshal(yamlDataBytes)
 		assert.Equal(t, errs, []error{newValidationErrorTypeNotFound("boo", "bar")})
-		var expectedFile *ast.File
-		assert.Equal(t, file, expectedFile)
+		var expectedFile []ast.Decl
+		assert.Equal(t, decls, expectedFile)
 	})
 }

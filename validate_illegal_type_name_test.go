@@ -9,8 +9,7 @@ import (
 func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 	t.Run("should not fail on valid key inputs", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
+			"foo": "int",
 			"baz": map[interface{}]interface{}{
 				"ban": "int",
 			},
@@ -27,8 +26,7 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 	t.Run("should fail on spaces in key literal", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"fo o":     "int",
+			"fo o": "int",
 			"baz": map[interface{}]interface{}{
 				"oof":  "int",
 				"ba n": "int",
@@ -49,9 +47,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 	t.Run("should not fail on usage of allowed type names", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"bar":      "string",
+			"foo": "int",
+			"bar": "string",
 			"baz": map[interface{}]interface{}{
 				"ban": "int32",
 			},
@@ -68,9 +65,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 	t.Run("should fail on usage of keywords", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"break":    "int",
-			"bar":      "string",
+			"break": "int",
+			"bar":   "string",
 			"baz": map[interface{}]interface{}{
 				"const": "int32",
 			},
@@ -90,10 +86,9 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 	t.Run("should fail on usage special characters", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"*":        "int",
-			"<":        "string",
-			"fo$o":     "int",
+			"*":    "int",
+			"<":    "string",
+			"fo$o": "int",
 			"baz": map[interface{}]interface{}{
 				">-":    "int32",
 				"bent{": "int32",

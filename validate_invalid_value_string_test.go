@@ -9,9 +9,8 @@ import (
 func TestValidateYamlInvalidValueString(t *testing.T) {
 	t.Run("should not fail on usage of allowed values strings", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"bar":      "map[int]string",
+			"foo": "int",
+			"bar": "map[int]string",
 			"baz": map[interface{}]interface{}{
 				"ban": "[]int32",
 			},
@@ -28,12 +27,11 @@ func TestValidateYamlInvalidValueString(t *testing.T) {
 
 	t.Run("should fail on usage of '['/']' in the wrong places", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"a":        "[]string",
-			"b":        "map[int]string]",
-			"foo":      "int[]",
-			"bar":      "[]map[int]string",
-			"bu":       "bar",
+			"a":   "[]string",
+			"b":   "map[int]string]",
+			"foo": "int[]",
+			"bar": "[]map[int]string",
+			"bu":  "bar",
 			"baz": map[interface{}]interface{}{
 				"ban": "[]in[t32",
 				"fan": "[]",

@@ -5,11 +5,9 @@ import (
 	"reflect"
 )
 
-const (
-	packageNameKey string = "_package"
-)
-
 var golangBasicTypes = []string{"string", "bool", "int8", "uint8", "byte", "int16", "uint16", "int32", "rune", "uint32", "int64", "uint64", "int", "uint", "uintptr", "float32", "float64", "complex64", "complex128"}
+
+const mockPackageName string = "foobar"
 
 func isString(unknown interface{}) bool {
 	v := reflect.ValueOf(unknown)
@@ -52,9 +50,6 @@ func structuralValidation(yamlData map[interface{}]interface{}) (errs []error) {
 	valueErrors := validateIllegalValue(yamlData)
 	errs = append(errs, valueErrors...)
 
-	missingPackageDeclarationErrs := validateMissingPackageName(yamlData)
-	errs = append(errs, missingPackageDeclarationErrs...)
-
 	return
 }
 
@@ -65,9 +60,6 @@ func syntacticalValidation(yamlData map[interface{}]interface{}) (errs []error) 
 
 	invalidValueStringErrs := validateInvalidValueString(yamlData)
 	errs = append(errs, invalidValueStringErrs...)
-
-	illegalPackageNameErrors := validateIllegalPackageName(yamlData)
-	errs = append(errs, illegalPackageNameErrors...)
 
 	return
 }

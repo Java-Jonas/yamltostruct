@@ -23,16 +23,12 @@ func alphabeticalRange(data map[interface{}]interface{}, fn func(key string, val
 }
 
 func convertToAST(yamlData map[interface{}]interface{}) *ast.File {
-	sw := &sourceWriter{}
+	sw := newSourceWriter()
 
 	alphabeticalRange(yamlData, func(keyName string, value interface{}) {
 		if isString(value) {
 			valueString := fmt.Sprintf("%v", value)
-			if keyName == packageNameKey {
-				sw.addPackageName(valueString)
-			} else {
-				sw.addNamedType(keyName, valueString)
-			}
+			sw.addNamedType(keyName, valueString)
 			return
 		}
 
@@ -55,14 +51,13 @@ type sourceWriter struct {
 	sourceCode string
 }
 
+func newSourceWriter() *sourceWriter {
+	return &sourceWriter{"package " + mockPackageName + "\n"}
+}
+
 func (s *sourceWriter) parse() *ast.File {
 	file, _ := parser.ParseFile(token.NewFileSet(), "", s.sourceCode, 0)
 	return file
-}
-
-func (s *sourceWriter) addPackageName(packageName string) *sourceWriter {
-	s.sourceCode = fmt.Sprintf("package %s\n%s", packageName, s.sourceCode)
-	return s
 }
 
 func (s *sourceWriter) addNamedType(name, typeName string) *sourceWriter {

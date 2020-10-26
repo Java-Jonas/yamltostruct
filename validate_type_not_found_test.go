@@ -9,11 +9,10 @@ import (
 func TestValidateYamlDataTypeNotFound(t *testing.T) {
 	t.Run("should not fail on usage of standard types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"bar":      "string",
-			"baf":      "[]string",
-			"bal":      "map[string]int",
+			"foo": "int",
+			"bar": "string",
+			"baf": "[]string",
+			"bal": "map[string]int",
 			"baz": map[interface{}]interface{}{
 				"ban":  "int32",
 				"bunt": "[]int",
@@ -32,12 +31,11 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 	t.Run("should not fail on usage of declared types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"bar":      "string",
-			"baf":      "[]foo",
-			"bal":      "map[foo]bar",
-			"bum":      "*int",
+			"foo": "int",
+			"bar": "string",
+			"baf": "[]foo",
+			"bal": "map[foo]bar",
+			"bum": "*int",
 			"baz": map[interface{}]interface{}{
 				"ban":  "int32",
 				"bam":  "bar",
@@ -59,8 +57,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 	t.Run("should fail on usage of types declared in object", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
+			"foo": "int",
 			"baz": map[interface{}]interface{}{
 				"ban": "int32",
 				"bar": "ban",
@@ -82,9 +79,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 	t.Run("should fail on usage of unknown types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"fof":      "schtring",
+			"foo": "int",
+			"fof": "schtring",
 			"baz": map[interface{}]interface{}{
 				"ban": "int32",
 				"bam": "bar",
@@ -105,9 +101,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 	t.Run("should fail on usage of unknown types in slices", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"fof":      "[]schtring",
+			"foo": "int",
+			"fof": "[]schtring",
 			"baz": map[interface{}]interface{}{
 				"ban": "int32",
 				"bam": "[]bar",
@@ -128,10 +123,9 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 	t.Run("should fail on usage of unknown types in maps", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"fof":      "[int]schtring",
-			"boo":      "[schtring]int",
+			"foo": "int",
+			"fof": "[int]schtring",
+			"boo": "[schtring]int",
 			"baz": map[interface{}]interface{}{
 				"ban": "int32",
 				"bam": "[int]bar",
@@ -155,8 +149,7 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 	t.Run("should fail with multiple errors of multiple undefined types are used in declaration", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "map[bar]map[ban]baz",
+			"foo": "map[bar]map[ban]baz",
 		}
 
 		actualErrors := logicalValidation(data)
@@ -174,9 +167,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 	t.Run("should not fail when type is used before declared", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"fof":      "foo",
-			"foo":      "int",
+			"fof": "foo",
+			"foo": "int",
 			"baz": map[interface{}]interface{}{
 				"ban": "int32",
 				"bam": "bar",

@@ -9,9 +9,8 @@ import (
 func TestValidateYamlIllegalValue(t *testing.T) {
 	t.Run("should not fail on usage of allowed values", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"bar":      "string",
+			"foo": "int",
+			"bar": "string",
 			"baz": map[interface{}]interface{}{
 				"ban": "int32",
 			},
@@ -28,9 +27,8 @@ func TestValidateYamlIllegalValue(t *testing.T) {
 
 	t.Run("should fail on usage of numbers", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      1,
-			"bar":      1.2,
+			"foo": 1,
+			"bar": 1.2,
 			"baz": map[interface{}]interface{}{
 				"ban": 3,
 			},
@@ -51,9 +49,8 @@ func TestValidateYamlIllegalValue(t *testing.T) {
 
 	t.Run("should fail on usage of empty and nil values", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      nil,
-			"bar":      "",
+			"foo": nil,
+			"bar": "",
 			"baz": map[interface{}]interface{}{
 				"ban": nil,
 				"baf": "",
@@ -76,9 +73,8 @@ func TestValidateYamlIllegalValue(t *testing.T) {
 
 	t.Run("should fail on usage of invalid list values", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"bar":      "string",
+			"foo": "int",
+			"bar": "string",
 			"baz": map[interface{}]interface{}{
 				"ban":  "int32",
 				"mant": []interface{}{},
@@ -100,9 +96,8 @@ func TestValidateYamlIllegalValue(t *testing.T) {
 
 	t.Run("should fail on usage of invalid nested object values", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "int",
-			"bar":      "string",
+			"foo": "int",
+			"bar": "string",
 			"baz": map[interface{}]interface{}{
 				"ban":  "int32",
 				"bant": map[interface{}]interface{}{},

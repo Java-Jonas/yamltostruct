@@ -9,7 +9,6 @@ import (
 func TestFieldLevels(t *testing.T) {
 	t.Run("should build declarations with expected fieldLevels", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"foo": map[interface{}]interface{}{
 				"bar": "string",
 			},
@@ -33,9 +32,8 @@ func TestFieldLevels(t *testing.T) {
 func TestClosureKind(t *testing.T) {
 	t.Run("should have closureKind closureKindBasicType", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
-			"bar":      "string",
+			"foo": "bar",
+			"bar": "string",
 		}
 
 		pb := pathBuilder{
@@ -49,9 +47,8 @@ func TestClosureKind(t *testing.T) {
 
 	t.Run("should have closureKind closureKindReference (1/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
-			"bar":      "*string",
+			"foo": "bar",
+			"bar": "*string",
 		}
 
 		pb := pathBuilder{
@@ -65,9 +62,8 @@ func TestClosureKind(t *testing.T) {
 
 	t.Run("should have closureKind closureKindReference (2/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
-			"bar":      "[]string",
+			"foo": "bar",
+			"bar": "[]string",
 		}
 
 		pb := pathBuilder{
@@ -81,9 +77,8 @@ func TestClosureKind(t *testing.T) {
 
 	t.Run("should have closureKind closureKindReference (3/3)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
-			"bar":      "map[string]int",
+			"foo": "bar",
+			"bar": "map[string]int",
 		}
 
 		pb := pathBuilder{
@@ -97,9 +92,8 @@ func TestClosureKind(t *testing.T) {
 
 	t.Run("should have closureKind closureKindRecursiveness", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
-			"bar":      "foo",
+			"foo": "bar",
+			"bar": "foo",
 		}
 
 		pb := pathBuilder{
@@ -115,10 +109,9 @@ func TestClosureKind(t *testing.T) {
 func TestPathBuilder(t *testing.T) {
 	t.Run("should build one path of flat types and exit on loop", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
-			"ban":      "foo",
-			"bar":      "ban",
+			"foo": "bar",
+			"ban": "foo",
+			"bar": "ban",
 		}
 
 		pb := pathBuilder{
@@ -134,9 +127,8 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build one path of flat types that exits on a basic type", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
-			"bar":      "string",
+			"foo": "bar",
+			"bar": "string",
 		}
 
 		pb := pathBuilder{
@@ -152,8 +144,7 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build one path of a flat type directly", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"bar":      "string",
+			"bar": "string",
 		}
 
 		pb := pathBuilder{
@@ -169,7 +160,6 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build one path of nested types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 			},
@@ -189,7 +179,6 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build two paths of nested types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 				"bam": "string",
@@ -216,7 +205,6 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build a path with a itself-referring struct", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "bar",
 			},
@@ -235,7 +223,6 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build multiple paths of nested types", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 				"bam": "string",
@@ -275,7 +262,6 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build paths from yamlData root", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 				"bam": "string",
@@ -306,8 +292,7 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build recursive path from self referencing type", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "foo",
+			"foo": "foo",
 		}
 
 		pb := pathBuilder{
@@ -327,7 +312,6 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should build 2 recursive paths on self referencing objects", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 			},
@@ -355,7 +339,6 @@ func TestPathBuilder(t *testing.T) {
 
 	t.Run("should stop paths on reference type used", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "*baz",
 				"fan": "[]baz",
@@ -388,7 +371,6 @@ func TestPathBuilder(t *testing.T) {
 func TestDeclarationPath(t *testing.T) {
 	t.Run("should build declaration path", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
 			"bar": map[interface{}]interface{}{
 				"foo": "baz",
 			},
@@ -448,17 +430,15 @@ func TestIsReferenceType(t *testing.T) {
 func TestContainsUncomparableValue(t *testing.T) {
 	t.Run("should not find reference value (1/2)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "string",
-			"bar":      "foo",
+			"foo": "string",
+			"bar": "foo",
 		}
 
 		assert.Equal(t, containsUncomparableValue("bar", data), false)
 	})
 	t.Run("should not find reference value (2/2)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
+			"foo": "bar",
 			"bar": map[interface{}]interface{}{
 				"ban": "string",
 				"baz": "int",
@@ -469,35 +449,31 @@ func TestContainsUncomparableValue(t *testing.T) {
 	})
 	t.Run("should find reference value (1/4)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "[]string",
-			"bar":      "foo",
+			"foo": "[]string",
+			"bar": "foo",
 		}
 
 		assert.Equal(t, containsUncomparableValue("bar", data), true)
 	})
 	t.Run("should find reference value (2/4)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "map[int]string",
-			"bar":      "foo",
+			"foo": "map[int]string",
+			"bar": "foo",
 		}
 
 		assert.Equal(t, containsUncomparableValue("bar", data), true)
 	})
 	t.Run("should find reference value (3/4)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "*string",
-			"bar":      "foo",
+			"foo": "*string",
+			"bar": "foo",
 		}
 
 		assert.Equal(t, containsUncomparableValue("bar", data), true)
 	})
 	t.Run("should find reference value (4/4)", func(t *testing.T) {
 		data := map[interface{}]interface{}{
-			"_package": "packageName",
-			"foo":      "bar",
+			"foo": "bar",
 			"bar": map[interface{}]interface{}{
 				"ban": "[]string",
 				"baz": "int",

@@ -29,7 +29,6 @@ func logErrs(errs []error) {
 
 func main() {
         yamlData := []byte(`
-_package: entities
 name:
   first: string
   last: string
@@ -65,14 +64,12 @@ person:
 | Error | Text | Meaning |
 |---|---------|----------|
 | ErrIllegalValue | value assigned to key "{KeyName}" in "{ParentObject}" is invalid | An invalid value was defined (nil, "", List, Object in Object). |
-| ErrMissingPackageName | package name was not specified in the "_package" field at root level | A package name is required (e.g. "main"). |
 <br/> 
 
 ### syntactical:
 | Error | Text | Meaning |
 |---|---------|----------|
 | ErrIllegalTypeName | illegal type name "{KeyName}" in "{ParentObject}" | A type was named without adhering to go's syntax limitations (e.g. "fo$o", "func", "<-+"). |
-| ErrIllegalPackageName | name "{PackageName}" is not a valid package name | An invalid name was assigned to the "_package" field. |
 | ErrInvalidValueString | value "{ValueString}" assigned to "{KeyName}" in "{ParantObject}" is invalid | An invalid value was assigned to a key |
 <br/> 
 
