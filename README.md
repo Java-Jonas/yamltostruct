@@ -1,6 +1,6 @@
 
 ## About
-yamltostruct lets you define golang types in yaml format and unmarshals it into an [AST](https://golang.org/pkg/go/ast/#File).
+yamltostruct lets you define golang types in yaml format and unmarshals it into [AST declarations](https://golang.org/pkg/go/ast/#File).
 <br/>
 <br/>
 ## Motivation
@@ -39,18 +39,18 @@ person:
   id: id
 `)
 
-        file, errs := yamltostruct.Unmarshal(yamlData)
+        decls, errs := yamltostruct.Unmarshal(yamlData)
 
         if len(errs) > 0 {
                 logErrs(errs)
                 return
         }
 
-        // pretty print ast
-        ast.Print(token.NewFileSet(), file)
+        // pretty print declaration information
+        ast.Print(token.NewFileSet(), decls)
         fmt.Println("")
-        // print as golang source code
-        printer.Fprint(os.Stdout, token.NewFileSet(), file)
+        // print generated code
+        printer.Fprint(os.Stdout, token.NewFileSet(), decls)
 }
 ```
 <br/>
