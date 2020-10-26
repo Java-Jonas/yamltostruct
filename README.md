@@ -1,12 +1,33 @@
 
 ## About
-yamltostruct lets you define golang types in yaml format and unmarshals it into [AST declarations](https://golang.org/pkg/go/ast/#File).
+yamltostruct lets you define golang types in yaml format and unmarshals them into [AST declarations](https://golang.org/pkg/go/ast/#File).
+***
+### in:
+```
+name:
+  first: string
+  last: string
+id: string
+person:
+  name: name
+  age: int
+  id: id
+```
+### out:
+```
+type id string
+type name struct {
+	first	string
+	last	string
+}
+type person struct {
+	age	int
+	id	id
+	name	name
+}
+```
 <br/>
-<br/>
-## Motivation
-This was a project for me to get more comfortable with [TDD](https://en.wikipedia.org/wiki/Test-driven_development) and golang. I don't think the library itself is very useful and I am aware that there are ways I could have achieved the same functionality with a lot less effort. However this was more of a fun/educational project and it has fulfilled its purpose.
-<br/>
-<br/>
+
 ## Usage
 ```
 package main
@@ -80,6 +101,13 @@ person:
 | ErrRecursiveTypeUsage | illegal recursive type detected for "{RecurringKeyNames}" | A recursive type was defined. |
 | ErrInvalidMapKey | "{MapKey}" in "{ValueString}" is not a valid map key | An uncomparable type was chosen as map key. |
 <br/> 
+
+
+## Motivation
+This was a project for me to get more comfortable with [TDD](https://en.wikipedia.org/wiki/Test-driven_development) and golang. I don't think the library itself is very useful and I am aware that there are ways I could have achieved the same functionality with a lot less effort. However this was more of a fun/educational project and it has fulfilled its purpose.
+<br/>
+<br/>
+
 
 ### TODO:
 - implement array support
