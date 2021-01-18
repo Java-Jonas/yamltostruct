@@ -52,12 +52,10 @@ func printDecls(decls []ast.Decl) string {
 	return buf.String()
 }
 
-func toNormalizedSourceCode(inputYamlData map[interface{}]interface{}, expectedSourceCode string) (string, string) {
-	inputAST := convertToAST(inputYamlData)
-	inputSourceCode := printDecls(inputAST.Decls)
-	normalizedInput := normalizeWhitespace(inputSourceCode)
-	normalizedExpectedOutput := normalizeWhitespace(expectedSourceCode)
-	return normalizedInput, normalizedExpectedOutput
+func printDeclsFromYamlData(inputYamlData map[interface{}]interface{}) string {
+	golangAST := convertToAST(inputYamlData)
+	golangDecls := printDecls(golangAST.Decls)
+	return golangDecls
 }
 
 func TestConvertToASTBasicCases(t *testing.T) {
@@ -69,7 +67,9 @@ func TestConvertToASTBasicCases(t *testing.T) {
 		expectedOutput := `
 		type bar int
 		type foo string`
-		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
+
+		normalizedActualOutput := normalizeWhitespace(printDeclsFromYamlData(input))
+		normalizedExpectedOutput := normalizeWhitespace(expectedOutput)
 
 		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
 	})
@@ -80,10 +80,10 @@ func TestConvertToASTBasicCases(t *testing.T) {
 			},
 		}
 		expectedOutput := `
-		type foo struct{
-			bar int
-		}`
-		normalizedActualOutput, normalizedExpectedOutput := toNormalizedSourceCode(input, expectedOutput)
+		type foo struct{ bar int }`
+
+		normalizedActualOutput := normalizeWhitespace(printDeclsFromYamlData(input))
+		normalizedExpectedOutput := normalizeWhitespace(expectedOutput)
 
 		assert.Equal(t, normalizedActualOutput, normalizedExpectedOutput)
 	})
