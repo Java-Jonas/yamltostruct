@@ -8,7 +8,8 @@ import (
 	"sort"
 )
 
-func alphabeticalRange(data map[interface{}]interface{}, fn func(key string, value interface{})) {
+// used to process map in determined order based on key names
+func rangeInAlphabeticalOrder(data map[interface{}]interface{}, fn func(key string, value interface{})) {
 	var keys []string
 	for key := range data {
 		keyLiteral := fmt.Sprintf("%v", key)
@@ -25,7 +26,7 @@ func alphabeticalRange(data map[interface{}]interface{}, fn func(key string, val
 func convertToAST(yamlData map[interface{}]interface{}) *ast.File {
 	sw := newSourceWriter()
 
-	alphabeticalRange(yamlData, func(keyName string, value interface{}) {
+	rangeInAlphabeticalOrder(yamlData, func(keyName string, value interface{}) {
 		if isString(value) {
 			valueString := fmt.Sprintf("%v", value)
 			sw.addNamedType(keyName, valueString)
@@ -35,7 +36,7 @@ func convertToAST(yamlData map[interface{}]interface{}) *ast.File {
 		if isMap(value) {
 			mapValue := value.(map[interface{}]interface{})
 			sw.startStructType(keyName)
-			alphabeticalRange(mapValue, func(_key string, _value interface{}) {
+			rangeInAlphabeticalOrder(mapValue, func(_key string, _value interface{}) {
 				_valueString := fmt.Sprintf("%v", _value)
 				_keyName := fmt.Sprintf("%v", _key)
 				sw.addStructField(_keyName, _valueString)

@@ -89,7 +89,7 @@ func TestConvertToASTBasicCases(t *testing.T) {
 	})
 }
 
-func TestAlphabeticalRange(t *testing.T) {
+func TestRangeInAlphabeticalOrder(t *testing.T) {
 	t.Run("should loop in alphabetical range", func(t *testing.T) {
 		input := map[interface{}]interface{}{
 			"a": "1",
@@ -100,7 +100,7 @@ func TestAlphabeticalRange(t *testing.T) {
 		for i := 0; i < 100; i++ {
 			var receivedKeys []string
 			var receivedValues []string
-			alphabeticalRange(input, func(key string, value interface{}) {
+			rangeInAlphabeticalOrder(input, func(key string, value interface{}) {
 				_key := fmt.Sprintf("%v", key)
 				receivedKeys = append(receivedKeys, _key)
 				_value := fmt.Sprintf("%v", value)
