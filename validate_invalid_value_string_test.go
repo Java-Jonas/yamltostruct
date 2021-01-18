@@ -21,8 +21,8 @@ func TestValidateYamlInvalidValueString(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of '['/']' in the wrong places", func(t *testing.T) {
@@ -62,8 +62,8 @@ func TestValidateYamlInvalidValueString(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 }
 

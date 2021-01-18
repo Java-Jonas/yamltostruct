@@ -20,8 +20,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on spaces in key literal", func(t *testing.T) {
@@ -41,8 +41,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should not fail on usage of allowed type names", func(t *testing.T) {
@@ -59,8 +59,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of keywords", func(t *testing.T) {
@@ -80,8 +80,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage special characters", func(t *testing.T) {
@@ -106,8 +106,8 @@ func TestValidateYamlDataIllegalTypeName(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 }
 

@@ -25,8 +25,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should not fail on usage of declared types", func(t *testing.T) {
@@ -51,8 +51,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of types declared in object", func(t *testing.T) {
@@ -73,8 +73,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of unknown types", func(t *testing.T) {
@@ -95,8 +95,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of unknown types in slices", func(t *testing.T) {
@@ -117,8 +117,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of unknown types in maps", func(t *testing.T) {
@@ -143,8 +143,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail with multiple errors of multiple undefined types are used in declaration", func(t *testing.T) {
@@ -161,8 +161,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should not fail when type is used before declared", func(t *testing.T) {
@@ -181,8 +181,8 @@ func TestValidateYamlDataTypeNotFound(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 }

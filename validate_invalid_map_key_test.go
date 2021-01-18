@@ -24,8 +24,8 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of reference type directly as map key", func(t *testing.T) {
@@ -47,8 +47,8 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of reference type as map key", func(t *testing.T) {
@@ -72,8 +72,8 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of reference type as map key in nested map", func(t *testing.T) {
@@ -93,8 +93,8 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 }
 

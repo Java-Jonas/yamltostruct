@@ -25,8 +25,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail when type is used in own declaration", func(t *testing.T) {
@@ -45,8 +45,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of recursive types (1/2)", func(t *testing.T) {
@@ -67,8 +67,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of recursive types (2/2)", func(t *testing.T) {
@@ -93,8 +93,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should not trigger recursive errors when references are used", func(t *testing.T) {
@@ -108,8 +108,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should fail on usage of directly recursive types", func(t *testing.T) {
@@ -124,8 +124,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should not trigger recursive errors when field has same name as type in object", func(t *testing.T) {
@@ -141,8 +141,8 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 
 	t.Run("should not trigger recursive errors when field has same name as parent object", func(t *testing.T) {
@@ -157,7 +157,7 @@ func TestValidateYamlRecursiveTypeUsage(t *testing.T) {
 
 		missingErrors, redundantErrors := matchErrors(actualErrors, expectedErrors)
 
-		assert.Equal(t, []error{}, missingErrors)
-		assert.Equal(t, []error{}, redundantErrors)
+		assert.Empty(t, missingErrors)
+		assert.Empty(t, redundantErrors)
 	})
 }
