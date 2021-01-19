@@ -213,12 +213,12 @@ func containsUncomparableValue(typeName string, yamlData map[interface{}]interfa
 
 	pathBuilder.build(declarationPath{}, typeName, yamlData[typeName], firstFieldLevel)
 
-	isComparable := false
+	var isUncomparable bool
 	for _, path := range pathBuilder.paths {
 		if path.closureKind == pathClosureKindRecursiveness || path.closureKind == pathClosureKindReference {
-			isComparable = true
+			isUncomparable = true
 		}
 	}
 
-	return isComparable
+	return isUncomparable
 }
