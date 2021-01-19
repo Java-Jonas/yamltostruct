@@ -108,6 +108,11 @@ This was a project for me to get more comfortable with [TDD](https://en.wikipedi
 <br/>
 <br/>
 
-
+## Test of Time
+In my humble opinion, maintenance is the most important feature in any software project. Revisiting old code and being content with the way it looks is pretty much a meme within the developer community. Every developer knows the struggles of working with hardly maintainable code, even if said developer is the author themselves. <br/>
+Critiquing the maintainability of your own code is hard, unless enough time has passed and you don't completely remember the details of the logic. This is why I revisited this project to implement a new feature. <br/>
+I started by skimming through the files, trying to remember how things work. Doing so I found a few incidents of bad practice and misleading function names, but nothing too serious. <br/>
+Being used to TDD, naturally I started writing tests for the feature I was going to implement. However, I soon realized that I was writing quite some redundant test cases. I was testing where there was not really anymore logic to test. I realized that my understanding of the code wasn't as great anymore as I thought. <br/>
+After regaining a good mental image of the code things finally started to flow. All in all I actually am quite content with how maintainable this code is. There is actually quite some heavy logic involved but things are still manageable.
 ### TODO:
 - implement array support
