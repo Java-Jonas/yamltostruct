@@ -62,7 +62,7 @@ func validateTypeNotFoundObject(
 // extracts all types which are defined in a type definition
 // map[string]int => []string{"string", "int"}
 func extractTypes(typeDefinitionString string) (extractedTypes []string) {
-	re := regexp.MustCompile(`[A-Za-z0-9_]*`)
+	re := regexp.MustCompile(`[A-Za-z]+[0-9]*`)
 	matches := re.FindAllString(typeDefinitionString, -1)
 	for _, match := range matches {
 		if match == "map" || match == "" {
