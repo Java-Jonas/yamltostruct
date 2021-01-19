@@ -212,11 +212,19 @@ func TestExtractTypes(t *testing.T) {
 
 		assert.Equal(t, expectedOutput, actualOutput)
 	})
-	t.Run("should extract all types from a complicated declaration", func(t *testing.T) {
+	t.Run("should extract all types from a complicated declaration (1/2)", func(t *testing.T) {
 		input := "map[string]map[uint][][]bool"
 
 		actualOutput := extractTypes(input)
 		expectedOutput := []string{"string", "uint", "bool"}
+
+		assert.Equal(t, expectedOutput, actualOutput)
+	})
+	t.Run("should extract all types from a complicated declaration (2/2)", func(t *testing.T) {
+		input := "map[[23]int]map[float][][][12]string"
+
+		actualOutput := extractTypes(input)
+		expectedOutput := []string{"int", "float", "string"}
 
 		assert.Equal(t, expectedOutput, actualOutput)
 	})
