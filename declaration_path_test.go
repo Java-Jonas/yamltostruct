@@ -420,10 +420,16 @@ func TestIsReferenceType(t *testing.T) {
 		assert.Equal(t, isReferenceType("int"), false)
 		assert.Equal(t, isReferenceType("*int"), true)
 		assert.Equal(t, isReferenceType("[]string"), true)
+		assert.Equal(t, isReferenceType("[23]string"), false)
+		assert.Equal(t, isReferenceType("*[23]string"), true)
+		assert.Equal(t, isReferenceType("[23]*string"), true)
+		assert.Equal(t, isReferenceType("[23][]int"), true)
 		assert.Equal(t, isReferenceType("map[int]string"), true)
 		assert.Equal(t, isReferenceType("map[foo]string"), true)
 		assert.Equal(t, isReferenceType("map[*foo]string"), true)
 		assert.Equal(t, isReferenceType("map[*string]string"), true)
+		assert.Equal(t, isReferenceType("map[int][23]string"), true)
+		assert.Equal(t, isReferenceType("map[[23]int]string"), true)
 	})
 }
 
