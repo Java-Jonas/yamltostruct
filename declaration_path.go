@@ -204,7 +204,7 @@ func containsOnlyBasicTypes(declarationTypeString string) bool {
 
 // TODO: this should be revisited at some point
 func isReferenceType(declarationTypeString string) bool {
-	re := regexp.MustCompile(`[\]*]`)
+	re := regexp.MustCompile(`\[\]|\*|map\[`)
 	return re.MatchString(declarationTypeString)
 }
 
