@@ -16,6 +16,7 @@ func TestValidateYamlDataInvalidMapKey(t *testing.T) {
 			"bal": "map[foo]int",
 			"baz": map[interface{}]interface{}{
 				"bal": "map[foo]int",
+				"ban": "map[[2]foo]int",
 			},
 		}
 

@@ -31,6 +31,8 @@ func extractMapKeyRecursive(mapKeys []string, mapType *ast.MapType, mockSrc stri
 	}
 
 	keyIdent, ok := mapType.Key.(*ast.Ident)
+	// map[string]int -> true; "string" is the Ident
+	// map[[]string]int, map[map[int]string]int .. -> false; map keys are not Idents
 	if !ok {
 		mapKey := mockSrc[mapType.Key.Pos()-1 : mapType.Key.End()-1]
 		mapKeys = append(mapKeys, mapKey)
