@@ -230,6 +230,26 @@ func TestPathBuilder(t *testing.T) {
 		assert.Contains(t, joinedNamess, []string{"baz", "bar.bam", "string"})
 	})
 
+	t.Run("should path ending with array of basic type", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"baz": "[2]string",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "baz", data["baz"], firstFieldLevel)
+
+		assert.Equal(t, 1, len(pb.paths))
+		joinedNamess := [][]string{
+			pb.paths[0].joinedNames(),
+		}
+
+		assert.Contains(t, joinedNamess, []string{"baz", "[2]string"})
+	})
+
 	t.Run("should build a path with a itself-referring struct", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"bar": map[interface{}]interface{}{

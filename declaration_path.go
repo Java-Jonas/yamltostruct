@@ -161,9 +161,12 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 			return
 		}
 
-		// replace valueLiteral with extracted type
-		nextValue := pb.yamlData[valueLiteral]
-		pb.build(path, valueLiteral, nextValue, firstFieldLevel)
+		// we extract the type so literals describing simple arrays like "[23]foo" become "foo"
+		// this only ever has an effect on arrays because all other types would be either reference types
+		// (e.g. "[]foo" or "map[foo]bar") and returned above, or named types like "foo"
+		nextTypeLiteral := extractTypes(valueLiteral)[0]
+		nextValue := pb.yamlData[nextTypeLiteral]
+		pb.build(path, nextTypeLiteral, nextValue, firstFieldLevel)
 	}
 
 	if isMap(value) {
