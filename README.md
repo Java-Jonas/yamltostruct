@@ -111,8 +111,8 @@ This was a project for me to get more comfortable with [TDD](https://en.wikipedi
 ## Test of Time
 In my humble opinion, maintenance is the most important feature in any software project. Revisiting old code and being content with the way it looks is pretty much a meme within the developer community. Every developer knows the struggles of working with hardly maintainable code, even if said developer is the author themselves. <br/>
 Critiquing the maintainability of your own code is hard, unless enough time has passed and you don't completely remember the details of the logic. This is why I revisited this project to implement a new feature. <br/>
-Here are a few things I noticed while revisiting this project:
-- the logic was a lot more complex than I remembered it
+Here are a few things I noticed while implementing said feature:
+- the logic was a lot more complex than I remembered it to be
 - despite my urge to use TDD I had to get a rough mental image of the logic before I was able to write meaningful tests
 
 ### TODO:
