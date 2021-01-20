@@ -82,27 +82,28 @@ func (path *declarationPath) addDeclaration(
 func (path declarationPath) joinedNames() []string {
 	var joinedNames []string
 
-	var wasStructField bool
+	var wasStructDecl bool
 	var parentStructName string
 
 	for _, declaration := range path.declarations {
 		if declaration.yamlValueKind == valueKindObject {
-			wasStructField = true
+			wasStructDecl = true
 			parentStructName = declaration.name
 			continue
 		}
 
-		if wasStructField && declaration.fieldLevel == secondFieldLevel {
+		if wasStructDecl && declaration.fieldLevel == secondFieldLevel {
 			joinedNames = append(joinedNames, parentStructName+"."+declaration.name)
 		} else {
 			joinedNames = append(joinedNames, declaration.name)
 		}
-		wasStructField = false
+		wasStructDecl = false
 		parentStructName = ""
 
 	}
 
-	if wasStructField {
+	// if path ended on struct declaration (it does if it's a recursive path)
+	if wasStructDecl {
 		joinedNames = append(joinedNames, parentStructName)
 	}
 
@@ -141,8 +142,8 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 			pb.addPath(path)
 			return
 		}
+
 		valueLiteral := fmt.Sprintf("%v", value)
-		nextValue := pb.yamlData[valueLiteral]
 
 		if isReferenceType(valueLiteral) {
 			path.addDeclaration(valueLiteral, valueKindString, fieldLevel, value)
@@ -160,6 +161,7 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 			return
 		}
 
+		nextValue := pb.yamlData[valueLiteral]
 		pb.build(path, valueLiteral, nextValue, firstFieldLevel)
 	}
 
