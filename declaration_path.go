@@ -153,7 +153,8 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 			return
 		}
 
-		if isBasicType(valueLiteral) {
+		// "string" -> true, "[2]string" -> true
+		if containsOnlyBasicTypes(valueLiteral) {
 			path.addDeclaration(valueLiteral, valueKindString, fieldLevelZero, value)
 			// a basic type implies this is the end of the path
 			path.setClosureKind(pathClosureKindBasicType)
