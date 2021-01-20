@@ -161,6 +161,7 @@ func (pb *pathBuilder) build(path declarationPath, keyName string, value interfa
 			return
 		}
 
+		// replace valueLiteral with extracted type
 		nextValue := pb.yamlData[valueLiteral]
 		pb.build(path, valueLiteral, nextValue, firstFieldLevel)
 	}

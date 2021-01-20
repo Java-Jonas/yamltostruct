@@ -203,6 +203,33 @@ func TestPathBuilder(t *testing.T) {
 		assert.Contains(t, joinedNamess, []string{"baz", "bar.bam", "string"})
 	})
 
+	t.Run("should build two paths of nested types including arrays", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"bar": map[interface{}]interface{}{
+				"foo": "[23]buf",
+				"bam": "string",
+			},
+			"baz": "[2]bar",
+			"buf": "string",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "baz", data["baz"], firstFieldLevel)
+
+		assert.Equal(t, 2, len(pb.paths))
+		joinedNamess := [][]string{
+			pb.paths[0].joinedNames(),
+			pb.paths[1].joinedNames(),
+		}
+
+		assert.Contains(t, joinedNamess, []string{"baz", "bar.foo", "buf", "string"})
+		assert.Contains(t, joinedNamess, []string{"baz", "bar.bam", "string"})
+	})
+
 	t.Run("should build a path with a itself-referring struct", func(t *testing.T) {
 		data := map[interface{}]interface{}{
 			"bar": map[interface{}]interface{}{
@@ -366,6 +393,31 @@ func TestPathBuilder(t *testing.T) {
 		assert.Contains(t, joinedNamess, []string{"ban", "bar.fan", "[]baz"})
 		assert.Contains(t, joinedNamess, []string{"ban", "bar.faz", "map[int]baz"})
 	})
+
+	t.Run("should stop paths on reference type used even withtin array", func(t *testing.T) {
+		data := map[interface{}]interface{}{
+			"bar": map[interface{}]interface{}{
+				"foo": "[23][]buf",
+			},
+			"baz": "[2]bar",
+			"buf": "string",
+		}
+
+		pb := pathBuilder{
+			paths:    []declarationPath{},
+			yamlData: data,
+		}
+
+		pb.build(declarationPath{}, "baz", data["baz"], firstFieldLevel)
+
+		assert.Equal(t, 1, len(pb.paths))
+		joinedNamess := [][]string{
+			pb.paths[0].joinedNames(),
+		}
+
+		assert.Contains(t, joinedNamess, []string{"baz", "bar.foo", "[23][]buf"})
+	})
+
 }
 
 func TestDeclarationPath(t *testing.T) {
