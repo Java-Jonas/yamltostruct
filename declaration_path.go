@@ -102,7 +102,7 @@ func (path declarationPath) joinedNames() []string {
 
 	}
 
-	// if path ended on struct declaration (it does if it's a recursive path)
+	// if path ended on struct declaration (it can happen if it's a recursive path)
 	if wasStructDecl {
 		joinedNames = append(joinedNames, parentStructName)
 	}

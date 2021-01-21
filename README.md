@@ -2,7 +2,7 @@
 ## About
 yamltostruct lets you define golang types in yaml format and unmarshals them into [AST declarations](https://golang.org/pkg/go/ast/#File).
 ***
-### in:
+### Input:
 ```
 name:
   first: string
@@ -13,7 +13,7 @@ person:
   age: int
   id: id
 ```
-### out:
+### Output:
 ```
 type id string
 type name struct {
@@ -114,6 +114,8 @@ Critiquing the maintainability of your own code is hard, unless enough time has 
 Here are a few things I noticed while implementing said feature:
 - the logic was a lot more complex than I remembered it to be
 - despite my urge to use TDD I had to get a rough mental image of the logic before I was able to write meaningful tests
+- very often logic that was hard to grasp at first turned out to be pretty straightforward after looking at the tests
+- the extend to which this software is tested is very appropriate
 
-### TODO:
-- implement array support
+All in all I'm happy that I didn't waste time trying to write "perfect code", but focused on writing perfectly maintainable code, which is always my preferred approach as I believe it leads to highest profits.
+
